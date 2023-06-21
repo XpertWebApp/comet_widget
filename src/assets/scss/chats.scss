@@ -1,0 +1,144 @@
+.widgt-chat-box {
+    .chatbox{
+        background: #FFFFFF;
+        border: 1px solid rgba(0, 0, 0, 0.35);
+        box-shadow: 1px 1px 7px 5px rgba(0, 0, 0, 0.04);
+        border-radius: 18px;
+        max-width: 750px;
+        width: 100%;
+        margin: 16px auto;
+        .msg-head{
+            background: #000000;
+            border: 1px solid rgba(0, 0, 0, 0.35);
+            box-shadow: 1px 1px 7px 5px rgba(0, 0, 0, 0.04);
+            border-radius: 18px 18px 0px 0px;
+            padding: 10px 16px;
+            h3{
+                font-style: normal;
+                font-weight: 600;
+                font-size:14px;
+                line-height: 18px;
+                letter-spacing: 0.01em;
+                color: #F4F5FC;
+                @include plusFontFamily;
+            }
+        }
+        .msg-body{
+            margin:0px 20px 0px;
+            padding: 20px 16px 0px 16px;
+            max-height: 290px;
+            overflow-y: auto;
+            min-height: 260px;
+            ul{
+                li{
+                    margin: 10px 0px;
+                    display: inline-block;
+                    width: 100%;
+                    &.sender{
+                        .chat-field{
+                            background: #EEF0F7;
+                            border: 1px solid #483F54;
+                            box-shadow: 1px 1px 7px 5px rgba(0, 0, 0, 0.04);
+                            border-radius: 18px;
+                            padding: 4px 20px;
+                            display: inline-flex;
+                            align-items: baseline;
+                            .user-icon{
+                                margin-right: 8px;
+                                position: relative;
+                                top: 6px;
+                                svg{
+                                    width: 20px;
+                                    height: auto;
+                                }
+                            }
+                            p{
+                                font-style: normal;
+                                font-weight: 400;
+                                font-size: 14px;
+                                line-height: 20px;
+                                color: #333333; 
+                                @include plusFontFamily;
+                                padding: 0px;
+                                width: 100%;
+                                padding-right: 20px;
+                            }
+                            span{
+                                font-style: normal;
+                                font-weight: 400;
+                                font-size: 12px;
+                                line-height: 16px;
+                                color: #656565;
+                                @include plusFontFamily;
+                                text-align: right;
+                                display: block;
+
+                            }
+                        }   
+                    }
+                   
+                    &.reply{
+                        display: block;
+                        width: 100%;
+                        text-align: right;
+                        position: relative;
+                        .chat-field{
+                            background: #FFFFFF;
+                            border: 1px solid rgba(0, 0, 0, 0.35);
+                            box-shadow: 1px 1px 7px 5px rgba(0, 0, 0, 0.04);
+                            border-radius: 18px;
+                            padding: 4px 20px;
+                            display: inline-block;
+                            p{
+                                @include plusFontFamily;
+                                font-style: normal;
+                                font-weight: 400;
+                                font-size: 14px;
+                                line-height: 20px;
+                                color: #333333;
+                                width: 100%;
+                                padding-right: 20px;
+                            }
+                            span{
+                                @include plusFontFamily;
+                                font-style: normal;
+                                font-weight: 400;
+                                font-size: 12px;
+                                line-height: 16px;
+                                color: #656565;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .send-box{
+            position: relative;
+            padding:0px 16px 20px;
+            form{
+                display: flex;
+                align-items: center;
+            }
+            input{
+                background: #FFFFFF;
+                border: 1px solid #483F54;
+                border-radius: 10px;
+                padding-right: 85px;
+                height: 35px;
+                  width: 100%;
+                  padding-left: 16px;
+            }
+            .chatsend{
+                position: absolute;
+                right: 32px;
+                top: 7px;
+                background-color: transparent;
+                border: none;
+                padding: 0px;
+                svg{
+                    width: 20px;
+                }
+            }
+        }
+    }
+}

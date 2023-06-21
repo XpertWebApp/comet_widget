@@ -1,0 +1,76 @@
+// Mixins
+$whiteColor: #FFFFFF;
+$darkCharcoal: #333333;
+$oldSilver: #838383;
+$Purpletaupe:#483F54;
+$BlueSlate:#7364DB;
+$WhiteAzureish:#D8DCF0;
+$Lightgray:#d5d5d5;
+$Silvercolor:#cccccc;
+$platinumwhite:#E0E0E3;
+$MagnoliaColor:#F4F5FC;
+$DarkGunmetal:#1d1930;
+$LightGrayColor:#CACACA;
+$GraniteGray:#656565;
+$UeRedColor:#BE0000;
+$LightSilverColor:#d9d9d9;
+
+@mixin plusFontFamily{
+  font-family: 'Plus Jakarta Sans', sans-serif!important;
+}
+@mixin flexAllCenter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  @mixin flexAllStart {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  @mixin flexStartBetween {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  @mixin flexEndBetween {
+    display: flex;
+    justify-content:flex-end;
+    align-items: center;
+  }
+  @mixin flexCenterBetween {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  @mixin buttonTransparent {
+    border: none;
+    cursor: pointer;
+    background-color: $transparent;
+  }
+  @mixin backanimation{
+    -webkit-transition: background-color 1900ms linear;
+    -ms-transition: background-color 1900ms linear;
+    transition: background-color 1900ms linear;
+}
+@mixin labelsize{
+  font-style: normal;
+  font-weight: 500;
+  font-size:18px;
+  line-height: 20px;
+  color: $darkCharcoal;
+  margin-bottom: 10px;
+}
+@mixin inputsize{
+  background: $whiteColor;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  box-shadow: 1px 1px 7px 5px rgba(0, 0, 0, 0.04);
+  border-radius: 18px;
+  height: 40px;
+  color: $darkCharcoal;
+  font-size: 16px;
+  line-height: 16px;
+  padding:6px 16px;
+}
+// variable
+
