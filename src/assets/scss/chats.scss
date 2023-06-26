@@ -1,12 +1,24 @@
+.chat-widget-wrapper{
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 10px);
+    display: inline-block;
+
 .widgt-chat-box {
+    position: absolute;
+    right: 20px;
+    top: auto;
+    bottom: 80px;
+    width: 100%;
+    left: auto;
     .chatbox{
         background: #FFFFFF;
         border: 1px solid rgba(0, 0, 0, 0.35);
         box-shadow: 1px 1px 7px 5px rgba(0, 0, 0, 0.04);
         border-radius: 18px;
-        max-width: 750px;
+        max-width: 650px;
         width: 100%;
-        margin: 16px auto;
+        margin: 16px 0px 16px auto;
         .msg-head{
             background: #000000;
             border: 1px solid rgba(0, 0, 0, 0.35);
@@ -33,7 +45,7 @@
             }
         }
         .msg-body{
-            margin:0px 20px 10px;
+            margin:0px 8px 10px 20px;
             padding: 20px 16px 0px 16px;
             max-height: 360px;
             overflow-y: auto;
@@ -211,5 +223,28 @@
                 }
             }
         }
+    }
+}
+}
+.chatshowbtn{
+    position: fixed;
+    right: 20px;
+    bottom: 24px;
+    background: #7364DB;
+    width:50px;
+    height:50px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s ease-in-out;
+    svg{
+        font-size: 25px;
+        fill: #FFFFFF;
+    }
+    &:hover{
+        transform: scale(1.2);
     }
 }
