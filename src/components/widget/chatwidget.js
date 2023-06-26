@@ -1,10 +1,9 @@
-
 import React from "react";
-import { SendIcon,ChatUser } from "@/assets/icon";
-import { Button, Form } from "react-bootstrap";
+import { SendIcon, ChatUser } from "@/assets/icon";
+import { Button, Form, FormGroup } from "react-bootstrap";
 import DotsLoader from "@/components/Loader/DotsLoader";
 import Image from "next/image";
-import UserImg from "../../assets/img/chatuser.png"
+import UserImg from "../../assets/img/chatuser.png";
 const ChatWidget = () => {
   return (
     <>
@@ -15,7 +14,7 @@ const ChatWidget = () => {
               <div className="msg-head">
                 <h3>Hi, Ask Us A Question Here....</h3>
                 <div className="chatuser-img">
-                    <Image src={UserImg} alt="user-img"/>
+                  <Image src={UserImg} alt="user-img" />
                 </div>
               </div>
 
@@ -90,6 +89,28 @@ const ChatWidget = () => {
                       <span className="time">just now</span>
                     </div>
                   </li>
+                  <li>
+                    <div className="sender-chat-form">
+                      <h3 className="heading">
+                        Let us Know how to contact you
+                      </h3>
+                      <div className="snd-chat-field">
+                        <FormGroup className="form-group">
+                          <Form.Label>Name</Form.Label>
+                          <Form.Control type="text" name="name" />
+                        </FormGroup>
+                        <FormGroup className="form-group">
+                          <Form.Label>Email</Form.Label>
+                          <Form.Control type="email" name="name" />
+                        </FormGroup>
+                        <div className="chat-sendbtn">
+                          <Button className="sendchat">
+                            <SendIcon />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
                 </ul>
               </div>
 
@@ -101,9 +122,9 @@ const ChatWidget = () => {
                     aria-label="message…"
                     placeholder="message…"
                   />
-                <div className="dots-loader">
-                      <DotsLoader />
-                    </div>
+                  <div className="dots-loader">
+                    <DotsLoader />
+                  </div>
                   <Button className="chatsend" type="button">
                     <SendIcon />
                   </Button>
