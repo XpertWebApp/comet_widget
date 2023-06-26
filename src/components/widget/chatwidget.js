@@ -6,6 +6,7 @@ import Image from "next/image";
 import UserImg from "../../assets/img/chatuser.png";
 import { get, post } from "@/pages/api/apis";
 import axios from "axios";
+import ChatButton from "./Chatbutton";
 
 const ChatWidget = () => {
   const [formData, setFormData] = useState({});
@@ -128,122 +129,135 @@ const ChatWidget = () => {
     }
   };
 
+  const [widgetshow, setWidgetShow] = useState(false);
+  const HandleWidget = () => {
+    setWidgetShow(!widgetshow);
+  };
+
   return (
     <>
-      <div className="widgt-chat-box">
-        <div className="chatbox">
-          <div className="modal-dialog-scrollable">
-            <div className="modal-content">
-              <div className="msg-head">
-                handleFormClick
-                <h3>Hi, Ask Us A Question Here....</h3>
-                <div className="chatuser-img">
-                  <Image src={UserImg} alt="user-img" />
-                </div>
-              </div>
-
-              <div className="msg-body">
-                <ul>
-                  <li className="sender">
-                    <div className="chat-field">
-                      <span className="user-icon">
-                        <ChatUser />
-                      </span>
-                      <div className="chating">
-                        <p> Hello! How may I assist you today? </p>
-                        <span className="time">10:06 am</span>
-                      </div>
+      {" "}
+      <div className="chat-widget-wrapper">
+        <ChatButton HandleWidget={HandleWidget} widgetshow={widgetshow} />
+        {widgetshow && (
+          <div className="widgt-chat-box">
+            <div className="chatbox">
+              <div className="modal-dialog-scrollable">
+                <div className="modal-content">
+                  <div className="msg-head">
+                    handleFormClick
+                    <h3>Hi, Ask Us A Question Here....</h3>
+                    <div className="chatuser-img">
+                      <Image src={UserImg} alt="user-img" />
                     </div>
-                  </li>
-                  {loader && !ipAddress && (
-                    <li>
-                      <div className="sender-chat-form">
-                        <h3 className="heading">
-                          Let us Know how to contact you
-                        </h3>
-                        <div className="snd-chat-field">
-                          <FormGroup className="form-group">
-                            <Form.Label>First Name</Form.Label>
-                            <Form.Control
-                              type="text"
-                              name="first_name"
-                              value={formData.first_name}
-                              onChange={handleChange}
-                            />
-                            <span className="error">{error.first_name}</span>
-                          </FormGroup>
-                          <FormGroup className="form-group">
-                            <Form.Label>Last Name</Form.Label>
-                            <Form.Control
-                              type="text"
-                              name="last_name"
-                              value={formData.last_name}
-                              onChange={handleChange}
-                            />
-                          </FormGroup>
-                          <FormGroup className="form-group">
-                            <Form.Label>Email</Form.Label>
-                            <Form.Control
-                              type="text"
-                              name="email"
-                              value={formData.email}
-                              onChange={handleChange}
-                            />
-                            <span className="error">{error.email}</span>
-                          </FormGroup>
-                          <div className="chat-sendbtn">
-                            <Button
-                              className="sendchat"
-                              onClick={handleFormClick}
-                            >
-                              <SendIcon />
-                            </Button>
+                  </div>
+
+                  <div className="msg-body">
+                    <ul>
+                      <li className="sender">
+                        <div className="chat-field">
+                          <span className="user-icon">
+                            <ChatUser />
+                          </span>
+                          <div className="chating">
+                            <p> Hello! How may I assist you today? </p>
+                            <span className="time">10:06 am</span>
                           </div>
                         </div>
-                      </div>
-                    </li>
-                  )}
+                      </li>
+                      {loader && !ipAddress && (
+                        <li>
+                          <div className="sender-chat-form">
+                            <h3 className="heading">
+                              Let us Know how to contact you
+                            </h3>
+                            <div className="snd-chat-field">
+                              <FormGroup className="form-group">
+                                <Form.Label>First Name</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  name="first_name"
+                                  value={formData.first_name}
+                                  onChange={handleChange}
+                                />
+                                <span className="error">
+                                  {error.first_name}
+                                </span>
+                              </FormGroup>
+                              <FormGroup className="form-group">
+                                <Form.Label>Last Name</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  name="last_name"
+                                  value={formData.last_name}
+                                  onChange={handleChange}
+                                />
+                              </FormGroup>
+                              <FormGroup className="form-group">
+                                <Form.Label>Email</Form.Label>
+                                <Form.Control
+                                  type="text"
+                                  name="email"
+                                  value={formData.email}
+                                  onChange={handleChange}
+                                />
+                                <span className="error">{error.email}</span>
+                              </FormGroup>
+                              <div className="chat-sendbtn">
+                                <Button
+                                  className="sendchat"
+                                  onClick={handleFormClick}
+                                >
+                                  <SendIcon />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      )}
 
-                  {/* <li className="reply">
+                      {/* <li className="reply">
                     <div className="chat-field">
                       <p> Last Minute Festive Packages From </p>
                       <span className="time">10:20 am</span>
                     </div>
                   </li> */}
-                </ul>
-              </div>
-
-              <div className="send-box">
-                <Form onSubmit={handleSubmit}>
-                  <input
-                    type="text"
-                    className={
-                      error?.message
-                        ? "form-control messageError"
-                        : "form-control"
-                    }
-                    aria-label="message…"
-                    placeholder="message…"
-                    name="message"
-                    disabled={loader && !ipAddress ? true : false}
-                    value={message}
-                    onChange={handleMessageChange}
-                  />
-                  <div className="dots-loader">
-                    {loading ? <DotsLoader /> : ""}
+                    </ul>
                   </div>
-                  <Button
-                    className="chatsend"
-                    disabled={loader && !ipAddress ? true : false}
-                    type="submit"
-                  >
-                    <SendIcon />
-                  </Button>
-                </Form>
+
+                  <div className="send-box">
+                    <Form onSubmit={handleSubmit}>
+                      <input
+                        type="text"
+                        className={
+                          error?.message
+                            ? "form-control messageError"
+                            : "form-control"
+                        }
+                        aria-label="message…"
+                        placeholder="message…"
+                        name="message"
+                        disabled={loader && !ipAddress ? true : false}
+                        value={message}
+                        onChange={handleMessageChange}
+                      />
+                      <div className="dots-loader">
+                        {loading ? <DotsLoader /> : ""}
+                      </div>
+                      <Button
+                        className="chatsend"
+                        disabled={loader && !ipAddress ? true : false}
+                        type="submit"
+                      >
+                        <SendIcon />
+                      </Button>
+                    </Form>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );
