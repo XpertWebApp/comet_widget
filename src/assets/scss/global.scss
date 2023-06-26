@@ -102,3 +102,26 @@ textarea:-moz-placeholder{
         }
     }
 }
+
+.chat-widget-button123 {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .chat-widget123 {
+    position: fixed;
+    bottom: 30px;
+    right: 0;
+    width: 300px;
+    padding: 10px;
+  }
+  .chat-widget-container123 {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    bottom: 10px;
+  }
