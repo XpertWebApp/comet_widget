@@ -13,6 +13,15 @@
             box-shadow: 1px 1px 7px 5px rgba(0, 0, 0, 0.04);
             border-radius: 18px 18px 0px 0px;
             padding: 10px 16px;
+            @include flexCenterBetween;
+            align-items: flex-start;
+            .chatuser-img{
+                img{
+                    width: 25px;
+                    height: 25px;
+                    border-radius: 50px;
+                }
+            }
             h3{
                 font-style: normal;
                 font-weight: 600;

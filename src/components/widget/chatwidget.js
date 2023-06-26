@@ -3,6 +3,8 @@ import React from "react";
 import { SendIcon,ChatUser } from "@/assets/icon";
 import { Button, Form } from "react-bootstrap";
 import DotsLoader from "@/components/Loader/DotsLoader";
+import Image from "next/image";
+import UserImg from "../../assets/img/chatuser.png"
 const ChatWidget = () => {
   return (
     <>
@@ -12,6 +14,9 @@ const ChatWidget = () => {
             <div className="modal-content">
               <div className="msg-head">
                 <h3>Hi, Ask Us A Question Here....</h3>
+                <div className="chatuser-img">
+                    <Image src={UserImg} alt="user-img"/>
+                </div>
               </div>
 
               <div className="msg-body">
