@@ -1,6 +1,5 @@
 import { Button, Form } from "react-bootstrap";
 import { SendIcon } from "@/assets/icon";
-import DotsLoader from "@/components/Loader/DotsLoader";
 
 const MessageForm = ({
   message,
@@ -38,7 +37,6 @@ const MessageForm = ({
             onChange={handleMessageChange}
             style={{ color: projectData?.text_input }}
           />
-          {/* <div className="dots-loader">{loading ? <DotsLoader /> : ""}</div> */}
           <Button
             className="chatsend"
             disabled={loader && !ipAddress ? true : false}

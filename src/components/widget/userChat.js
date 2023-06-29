@@ -1,5 +1,4 @@
 import { ChatUser } from "@/assets/icon";
-import DotsLoader from "../Loader/DotsLoader";
 
 const UserChat = ({ val, projectData }) => {
   return (
