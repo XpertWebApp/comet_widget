@@ -1,18 +1,29 @@
-import React, { useEffect, useState } from "react";
-import { SendIcon, ChatUser } from "@/assets/icon";
-import { Button, Form, FormGroup } from "react-bootstrap";
+import React, { useEffect, useRef, useState } from "react";
+import { StarIcon } from "@/assets/icon";
+import { Button } from "react-bootstrap";
 import DotsLoader from "@/components/Loader/DotsLoader";
 import Image from "next/image";
 import UserImg from "../../assets/img/chatuser.png";
-import { get, post } from "@/pages/api/apis";
-import axios from "axios";
 import ChatButton from "./Chatbutton";
-import toast from "toastr";
 import socketIOClient from "socket.io-client";
+import UserForm from "./userForm";
+import UserChat from "./userChat";
+import WelComeMessage from "./welcomeMessage";
+import RatingBox from "./ratingBox";
+import MessageForm from "./messageForm";
+import {
+  getIpData,
+  handleChange,
+  handleFormClick,
+  handleSubmit,
+} from "@/helper/functions";
 
 const socketIo = socketIOClient(process.env.WEB_API_URL);
 
 const ChatWidget = () => {
+  const bottomRef = useRef(null);
+  const [widgetshow, setWidgetShow] = useState(false);
+  const [rating, setRating] = useState(0);
   const [formData, setFormData] = useState({});
   const [error, setError] = useState({});
   const [ipAddress, setIpAddress] = useState("");
@@ -23,7 +34,19 @@ const ChatWidget = () => {
   const [senderData, setSenderData] = useState({});
   const [chatData, setChatData] = useState({});
   const [messages, setMessages] = useState([]);
+  const [history, setHistory] = useState([]);
+  const [chatagent, setChatAgent] = useState(false);
+  const [chatcontinue, setChatContinue] = useState(true);
+  const [ratingBox, setRatingBox] = useState(false);
 
+  const handleChatagent = () => {
+    setChatAgent(true);
+    setChatContinue(false);
+  };
+  const handleChatcht = () => {
+    setChatContinue(false);
+    setChatAgent(false);
+  };
   useEffect(() => {
     const ip = localStorage.getItem("ipAddress");
     setIpAddress(ip);
@@ -37,15 +60,21 @@ const ChatWidget = () => {
 
   useEffect(() => {
     if (ipAddress) {
-      getIpData();
+      getIpData(
+        setLoader,
+        ipAddress,
+        setSenderData,
+        setProjectData,
+        setChatData
+      );
     } else {
       setLoader(true);
     }
   }, [ipAddress]);
 
-  useEffect(() => {
-    getMessageSocketListner();
-  }, [message, messages]);
+  // useEffect(() => {
+  //   getMessageSocketListner();
+  // }, [message, messages]);
 
   // const getMessageSocketListner = async () => {
   //  const res = await socketIo.on("message", (data) => {
@@ -56,43 +85,6 @@ const ChatWidget = () => {
   //   });
   //   setMessages(messages);
   // };
-
-  const getIpData = async () => {
-    setLoader(true);
-    if (ipAddress) {
-      const res = await get(
-        `user/getWithIp?ip=${ipAddress}&api_key=a34449be63e668ad39b5ff6b624dfeaeadd97b76c47c25ce2263f1bb823af02c`
-      );
-      if (res?.data?.status) {
-        setSenderData(res.data.user);
-        setProjectData(res.data.project);
-        setChatData(res.data.chats);
-        setLoader(true);
-      }
-    } else {
-      setLoader(true);
-    }
-  };
-
-  const handleChange = (e) => {
-    let val = "";
-    if (e.target.name == "email") {
-      val = e.target.value.trim();
-      setError({
-        ...error,
-        email: "",
-      });
-    } else if (e.target.name == "first_name") {
-      val = e.target.value.trimStart();
-      setError({
-        ...error,
-        first_name: "",
-      });
-    } else {
-      val = e.target.value.trimStart();
-    }
-    setFormData({ ...formData, [e.target.name]: val });
-  };
 
   const isValid = () => {
     const regex = new RegExp("[a-z0-9]+@[a-z]+.[a-z]{2,3}");
@@ -122,30 +114,6 @@ const ChatWidget = () => {
     }
   };
 
-  const handleFormClick = async () => {
-    if (isValid()) {
-      let ipAdd = localStorage.getItem("ipAddress");
-      if (!ipAdd) {
-        const res = await axios.get(
-          `https://api.ipdata.co?api-key=${process.env.IPDATA_KEY}`
-        );
-        ipAdd = res.data.ip;
-      }
-      if (ipAdd) {
-        const res = await post("user/createUser", {
-          ...formData,
-          ip: ipAdd,
-        });
-        if (res && res.status == 200) {
-          localStorage.setItem("ipAddress", ipAdd);
-          setIpAddress(ipAdd);
-        } else {
-          toast.error(res.data.message);
-        }
-      }
-    }
-  };
-
   const handleMessageChange = (e) => {
     setMessage(e.target.value.trimStart());
     setError({
@@ -154,34 +122,38 @@ const ChatWidget = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (isMessageValid()) {
-      setLoading(true);
-      let msg = message;
-      setMessage("");
-      await socketIo.emit("sendMsg", {
-        chat_id: chatData._id,
-        user_id: senderData._id,
-        message: msg,
-        type: "user",
-      });
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
-    }
-  };
-
-  const [widgetshow, setWidgetShow] = useState(false);
   const HandleWidget = () => {
     setWidgetShow(!widgetshow);
   };
 
-  console.log(messages, "sdsddsdsdsdsdsdsd-messages");
+  const handleStarClick = (selectedRating) => {
+    setRating(selectedRating);
+  };
+
+  const renderStars = () => {
+    let stars = [];
+
+    for (let i = 1; i <= 5; i++) {
+      const starClass = i <= rating ? "star selected" : "star";
+
+      stars.push(
+        <>
+          <Button
+            key={i}
+            className={starClass}
+            onClick={() => handleStarClick(i)}
+          >
+            <StarIcon />
+          </Button>
+        </>
+      );
+    }
+
+    return stars;
+  };
 
   return (
     <>
-      {" "}
       <div className="chat-widget-wrapper">
         <ChatButton HandleWidget={HandleWidget} widgetshow={widgetshow} />
         {widgetshow && (
@@ -190,7 +162,6 @@ const ChatWidget = () => {
               <div className="modal-dialog-scrollable">
                 <div className="modal-content">
                   <div className="msg-head">
-                    handleFormClick
                     <h3>Hi, Ask Us A Question Here....</h3>
                     <div className="chatuser-img">
                       <Image src={UserImg} alt="user-img" />
@@ -199,175 +170,76 @@ const ChatWidget = () => {
 
                   <div className="msg-body">
                     <ul>
-                      <li className="sender">
-                        <div
-                          className="chat-field"
-                          style={{
-                            "border-color": projectData?.user_text_container,
-                          }}
-                        >
-                          <span className="user-icon">
-                            <ChatUser />
-                          </span>
-                          <div className="chating">
-                            <p style={{ color: projectData?.text_color }}>
-                              {" "}
-                              Hello! How may I assist you today?{" "}
-                            </p>
-                            <span
-                              className="time"
-                              style={{ color: projectData?.text_color }}
-                            >
-                              10:06 am
-                            </span>
-                          </div>
-                        </div>
-                      </li>
+                      <WelComeMessage projectData={projectData} />
                       {loader && !ipAddress && (
-                        <li>
-                          <div className="sender-chat-form">
-                            <h3 className="heading">
-                              Let us Know how to contact you
-                            </h3>
-                            <div className="snd-chat-field">
-                              <FormGroup className="form-group">
-                                <Form.Label>First Name</Form.Label>
-                                <Form.Control
-                                  type="text"
-                                  name="first_name"
-                                  value={formData.first_name}
-                                  onChange={handleChange}
-                                />
-                                <span className="error">
-                                  {error.first_name}
-                                </span>
-                              </FormGroup>
-                              <FormGroup className="form-group">
-                                <Form.Label>Last Name</Form.Label>
-                                <Form.Control
-                                  type="text"
-                                  name="last_name"
-                                  value={formData.last_name}
-                                  onChange={handleChange}
-                                />
-                              </FormGroup>
-                              <FormGroup className="form-group">
-                                <Form.Label>Email</Form.Label>
-                                <Form.Control
-                                  type="text"
-                                  name="email"
-                                  value={formData.email}
-                                  onChange={handleChange}
-                                />
-                                <span className="error">{error.email}</span>
-                              </FormGroup>
-                              <div className="chat-sendbtn">
-                                <Button
-                                  className="sendchat"
-                                  onClick={handleFormClick}
-                                >
-                                  <SendIcon />
-                                </Button>
-                              </div>
-                            </div>
-                          </div>
-                        </li>
+                        <UserForm
+                          formData={formData}
+                          handleChange={(e) =>
+                            handleChange(e, setError, setFormData, formData)
+                          }
+                          error={error}
+                          handleFormClick={(e) =>
+                            handleFormClick(e, isValid, formData, setIpAddress)
+                          }
+                        />
                       )}
                       {messages &&
                         messages.length > 0 &&
                         messages.map((val) => {
                           return (
                             <>
-                              {val?.recieverMessage && (
-                                <li className="sender">
-                                  <div
-                                    className="chat-field"
-                                    style={{
-                                      "border-color":
-                                        projectData?.user_text_container,
-                                    }}
-                                  >
-                                    <span className="user-icon">
-                                      <ChatUser />
-                                    </span>
-                                    <div className="chating">
-                                      <p
-                                        style={{
-                                          color: projectData?.text_color,
-                                        }}
-                                      >
-                                        {val?.recieverMessage}
-                                      </p>
-                                      <span
-                                        className="time"
-                                        style={{
-                                          color: projectData?.text_color,
-                                        }}
-                                      >
-                                        10:06 am
-                                      </span>
-                                    </div>
-                                  </div>
-                                </li>
-                              )}
-                              {val?.message && (
-                                <li className="reply">
-                                  <div
-                                    className="chat-field"
-                                    style={{
-                                      "border-color":
-                                        projectData?.text_container,
-                                    }}
-                                  >
-                                    <p
-                                      style={{ color: projectData?.text_color }}
-                                    >
-                                      {val?.message}
-                                    </p>
-                                    <span
-                                      className="time"
-                                      style={{ color: projectData?.text_color }}
-                                    >
-                                      10:20 am
-                                    </span>
-                                  </div>
-                                </li>
-                              )}
+                              <UserChat
+                                val={val}
+                                projectData={projectData}
+                                loading={loading}
+                              />
                             </>
                           );
                         })}
+                      <li className="sender">
+                        {loading ? <DotsLoader /> : ""}
+                      </li>
+                      {ratingBox && (
+                        <RatingBox
+                          chatcontinue={chatcontinue}
+                          handleChatagent={handleChatagent}
+                          renderStars={renderStars}
+                          chatagent={chatagent}
+                          handleChatcht={handleChatcht}
+                          rating={rating}
+                        />
+                      )}
                     </ul>
                   </div>
-
-                  <div className="send-box">
-                    <Form onSubmit={handleSubmit}>
-                      <input
-                        type="text"
-                        className={
-                          error?.message
-                            ? "form-control messageError"
-                            : "form-control"
-                        }
-                        aria-label="message…"
-                        placeholder="message…"
-                        name="message"
-                        disabled={loader && !ipAddress ? true : false}
-                        value={message}
-                        onChange={handleMessageChange}
-                        style={{ color: projectData?.text_input }}
-                      />
-                      <div className="dots-loader">
-                        {loading ? <DotsLoader /> : ""}
-                      </div>
-                      <Button
-                        className="chatsend"
-                        disabled={loader && !ipAddress ? true : false}
-                        type="submit"
-                      >
-                        <SendIcon text_button={projectData?.text_button} />
-                      </Button>
-                    </Form>
-                  </div>
+                  <MessageForm
+                    message={message}
+                    loader={loader}
+                    ipAddress={ipAddress}
+                    loading={loading}
+                    handleSubmit={(e) =>
+                      handleSubmit(
+                        e,
+                        isMessageValid,
+                        message,
+                        setMessage,
+                        history,
+                        projectData,
+                        chatData,
+                        senderData,
+                        messages,
+                        setLoading,
+                        setHistory,
+                        setMessages,
+                        bottomRef,
+                        setRatingBox,
+                        setError
+                      )
+                    }
+                    error={error}
+                    handleMessageChange={handleMessageChange}
+                    projectData={projectData}
+                    ratingBox={ratingBox}
+                  />
                 </div>
               </div>
             </div>
