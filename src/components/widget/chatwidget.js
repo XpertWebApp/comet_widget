@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { SendIcon, ChatUser } from "@/assets/icon";
+import { SendIcon, ChatUser, StarIcon } from "@/assets/icon";
 import { Button, Form, FormGroup } from "react-bootstrap";
 import DotsLoader from "@/components/Loader/DotsLoader";
 import Image from "next/image";
 import UserImg from "../../assets/img/chatuser.png";
 import { get, post } from "@/pages/api/apis";
 import axios from "axios";
+import { BsStar } from "react-icons/bs";
 import ChatButton from "./Chatbutton";
 
 const ChatWidget = () => {
@@ -15,7 +16,16 @@ const ChatWidget = () => {
   const [loader, setLoader] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-
+  const [chatagent, setChatAgent] = useState(false);
+  const [chatcontinue, setChatContinue] = useState(true);
+  const handleChatagent = () => {
+    setChatAgent(true)
+    setChatContinue(false);
+      }
+  const handleChatcht = () => {
+    setChatContinue(false);
+    setChatAgent(false)
+  }
   useEffect(() => {
     const ip = localStorage.getItem("ipAddress")
       ? localStorage.getItem("ipAddress")
@@ -133,7 +143,33 @@ const ChatWidget = () => {
   const HandleWidget = () => {
     setWidgetShow(!widgetshow);
   };
+  const [rating, setRating] = useState(0);
 
+  const handleStarClick = (selectedRating) => {
+    setRating(selectedRating);
+  };
+
+  const renderStars = () => {
+    const stars = [];
+
+    for (let i = 1; i <= 5; i++) {
+      const starClass = i <= rating ? "star selected" : "star";
+
+      stars.push(
+        <>
+          <Button
+            key={i}
+            className={starClass}
+            onClick={() => handleStarClick(i)}
+          >
+            <StarIcon />
+          </Button>
+        </>
+      );
+    }
+
+    return stars;
+  };
   return (
     <>
       {" "}
@@ -180,9 +216,11 @@ const ChatWidget = () => {
                                   value={formData.first_name}
                                   onChange={handleChange}
                                 />
-                                <span className="error">
-                                  {error.first_name}
-                                </span>
+                                {error.first_name && (
+                                  <span className="error">
+                                    {error.first_name}
+                                  </span>
+                                )}
                               </FormGroup>
                               <FormGroup className="form-group">
                                 <Form.Label>Last Name</Form.Label>
@@ -201,7 +239,9 @@ const ChatWidget = () => {
                                   value={formData.email}
                                   onChange={handleChange}
                                 />
-                                <span className="error">{error.email}</span>
+                                {error.email && (
+                                  <span className="error">{error.email}</span>
+                                )}
                               </FormGroup>
                               <div className="chat-sendbtn">
                                 <Button
@@ -215,7 +255,35 @@ const ChatWidget = () => {
                           </div>
                         </li>
                       )}
-
+                      <li>
+                        {chatcontinue && (
+                        <div className="chat-review">
+                        <div className="review-box">
+                          <h3>
+                            Does the 1-5 number rating question work with
+                            Comet?
+                          </h3>
+                          <div className="review-start" onClick={handleChatagent}>{renderStars()}</div>
+                          <div className="review-update">
+                            <span>Really Unsatisfied</span>
+                            <span>Really Satisfied</span>
+                          </div>
+                        </div>
+                        </div>
+                        )}
+                       
+                        {chatagent && (
+                          <div className="chat-agent-field">
+                          <h3>Do You Wish to Continue or you want to chat with our agent?</h3>
+                          <div className="cnt-agnt-btn">
+                            <Button className="cntbtn" onClick={handleChatcht}>Continue</Button>
+                            <Button className="chtagentbtn">Chat with Agent</Button>
+                          </div>
+                        </div>
+                        )}
+                      
+                      </li>
+                      
                       {/* <li className="reply">
                     <div className="chat-field">
                       <p> Last Minute Festive Packages From </p>
