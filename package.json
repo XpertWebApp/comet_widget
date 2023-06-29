@@ -18,7 +18,9 @@
     "react-bootstrap": "^2.7.4",
     "react-dom": "18.2.0",
     "react-icons": "^4.10.1",
-    "react-spinners": "^0.13.8"
+    "react-spinners": "^0.13.8",
+    "socket.io-client": "^4.7.1",
+    "toastr": "^2.1.4"
   },
   "devDependencies": {
     "sass": "^1.63.5"

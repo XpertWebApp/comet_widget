@@ -7,6 +7,10 @@ import UserImg from "../../assets/img/chatuser.png";
 import { get, post } from "@/pages/api/apis";
 import axios from "axios";
 import ChatButton from "./Chatbutton";
+import toast from "toastr";
+import socketIOClient from "socket.io-client";
+
+const socketIo = socketIOClient(process.env.WEB_API_URL);
 
 const ChatWidget = () => {
   const [formData, setFormData] = useState({});
@@ -15,13 +19,21 @@ const ChatWidget = () => {
   const [loader, setLoader] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [projectData, setProjectData] = useState({});
+  const [senderData, setSenderData] = useState({});
+  const [chatData, setChatData] = useState({});
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    const ip = localStorage.getItem("ipAddress")
-      ? localStorage.getItem("ipAddress")
-      : "";
+    const ip = localStorage.getItem("ipAddress");
     setIpAddress(ip);
   }, []);
+
+  useEffect(() => {
+    socketIo.emit("onChatConnect", {
+      chat_id: chatData._id,
+    });
+  }, [chatData]);
 
   useEffect(() => {
     if (ipAddress) {
@@ -31,12 +43,30 @@ const ChatWidget = () => {
     }
   }, [ipAddress]);
 
+  useEffect(() => {
+    getMessageSocketListner();
+  }, [message, messages]);
+
+  // const getMessageSocketListner = async () => {
+  //  const res = await socketIo.on("message", (data) => {
+  //     console.log(data, "sdsddsdsdsdsdsdsd");
+  //     if (!messages.find((val) => val.message == data)) {
+  //       messages.push({ message: data });
+  //     }
+  //   });
+  //   setMessages(messages);
+  // };
+
   const getIpData = async () => {
     setLoader(true);
     if (ipAddress) {
-      const res = await get(`user/getIp?ip=${ipAddress}`);
+      const res = await get(
+        `user/getWithIp?ip=${ipAddress}&api_key=a34449be63e668ad39b5ff6b624dfeaeadd97b76c47c25ce2263f1bb823af02c`
+      );
       if (res?.data?.status) {
-        setIpAddress(res?.data?.data?.ip);
+        setSenderData(res.data.user);
+        setProjectData(res.data.project);
+        setChatData(res.data.chats);
         setLoader(true);
       }
     } else {
@@ -102,13 +132,15 @@ const ChatWidget = () => {
         ipAdd = res.data.ip;
       }
       if (ipAdd) {
-        localStorage.setItem("ipAddress", ipAdd);
-        setIpAddress(ipAdd);
         const res = await post("user/createUser", {
           ...formData,
           ip: ipAdd,
         });
-        if (res && res.data && res.data.status) {
+        if (res && res.status == 200) {
+          localStorage.setItem("ipAddress", ipAdd);
+          setIpAddress(ipAdd);
+        } else {
+          toast.error(res.data.message);
         }
       }
     }
@@ -122,10 +154,21 @@ const ChatWidget = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (isMessageValid()) {
       setLoading(true);
+      let msg = message;
+      setMessage("");
+      await socketIo.emit("sendMsg", {
+        chat_id: chatData._id,
+        user_id: senderData._id,
+        message: msg,
+        type: "user",
+      });
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
     }
   };
 
@@ -133,6 +176,8 @@ const ChatWidget = () => {
   const HandleWidget = () => {
     setWidgetShow(!widgetshow);
   };
+
+  console.log(messages, "sdsddsdsdsdsdsdsd-messages");
 
   return (
     <>
@@ -155,13 +200,26 @@ const ChatWidget = () => {
                   <div className="msg-body">
                     <ul>
                       <li className="sender">
-                        <div className="chat-field">
+                        <div
+                          className="chat-field"
+                          style={{
+                            "border-color": projectData?.user_text_container,
+                          }}
+                        >
                           <span className="user-icon">
                             <ChatUser />
                           </span>
                           <div className="chating">
-                            <p> Hello! How may I assist you today? </p>
-                            <span className="time">10:06 am</span>
+                            <p style={{ color: projectData?.text_color }}>
+                              {" "}
+                              Hello! How may I assist you today?{" "}
+                            </p>
+                            <span
+                              className="time"
+                              style={{ color: projectData?.text_color }}
+                            >
+                              10:06 am
+                            </span>
                           </div>
                         </div>
                       </li>
@@ -215,13 +273,69 @@ const ChatWidget = () => {
                           </div>
                         </li>
                       )}
-
-                      {/* <li className="reply">
-                    <div className="chat-field">
-                      <p> Last Minute Festive Packages From </p>
-                      <span className="time">10:20 am</span>
-                    </div>
-                  </li> */}
+                      {messages &&
+                        messages.length > 0 &&
+                        messages.map((val) => {
+                          return (
+                            <>
+                              {val?.recieverMessage && (
+                                <li className="sender">
+                                  <div
+                                    className="chat-field"
+                                    style={{
+                                      "border-color":
+                                        projectData?.user_text_container,
+                                    }}
+                                  >
+                                    <span className="user-icon">
+                                      <ChatUser />
+                                    </span>
+                                    <div className="chating">
+                                      <p
+                                        style={{
+                                          color: projectData?.text_color,
+                                        }}
+                                      >
+                                        {val?.recieverMessage}
+                                      </p>
+                                      <span
+                                        className="time"
+                                        style={{
+                                          color: projectData?.text_color,
+                                        }}
+                                      >
+                                        10:06 am
+                                      </span>
+                                    </div>
+                                  </div>
+                                </li>
+                              )}
+                              {val?.message && (
+                                <li className="reply">
+                                  <div
+                                    className="chat-field"
+                                    style={{
+                                      "border-color":
+                                        projectData?.text_container,
+                                    }}
+                                  >
+                                    <p
+                                      style={{ color: projectData?.text_color }}
+                                    >
+                                      {val?.message}
+                                    </p>
+                                    <span
+                                      className="time"
+                                      style={{ color: projectData?.text_color }}
+                                    >
+                                      10:20 am
+                                    </span>
+                                  </div>
+                                </li>
+                              )}
+                            </>
+                          );
+                        })}
                     </ul>
                   </div>
 
@@ -240,6 +354,7 @@ const ChatWidget = () => {
                         disabled={loader && !ipAddress ? true : false}
                         value={message}
                         onChange={handleMessageChange}
+                        style={{ color: projectData?.text_input }}
                       />
                       <div className="dots-loader">
                         {loading ? <DotsLoader /> : ""}
@@ -249,7 +364,7 @@ const ChatWidget = () => {
                         disabled={loader && !ipAddress ? true : false}
                         type="submit"
                       >
-                        <SendIcon />
+                        <SendIcon text_button={projectData?.text_button} />
                       </Button>
                     </Form>
                   </div>
