@@ -9,7 +9,7 @@ const WelComeMessage = ({ projectData }) => {
         <div
           className="chat-field"
           style={{
-            "border-color": projectData?.user_text_container,
+            borderColor: projectData?.user_text_container,
           }}
         >
           <span className="user-icon">

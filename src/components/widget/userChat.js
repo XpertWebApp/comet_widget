@@ -9,7 +9,7 @@ const UserChat = ({ val, projectData }) => {
           <div
             className="chat-field"
             style={{
-              "border-color": projectData?.text_container,
+              borderColor: projectData?.text_container,
             }}
           >
             <p style={{ color: projectData?.text_color }}>
@@ -30,7 +30,7 @@ const UserChat = ({ val, projectData }) => {
           <div
             className="chat-field"
             style={{
-              "border-color": projectData?.user_text_container,
+              borderColor: projectData?.user_text_container,
             }}
           >
             <span className="user-icon">
