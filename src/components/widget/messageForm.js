@@ -10,14 +10,14 @@ const MessageForm = ({
   error,
   handleMessageChange,
   projectData,
-  ratingBox
+  ratingBox,
 }) => {
   return (
     <>
       <div className="send-box">
         <Form
           onSubmit={
-            loading && ratingBox
+            loading || ratingBox
               ? (e) => {
                   e.preventDefault();
                 }
