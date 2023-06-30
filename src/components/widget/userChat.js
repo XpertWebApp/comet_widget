@@ -1,7 +1,7 @@
 import { ChatUser } from "@/assets/icon";
 import { Typewriter } from "react-simple-typewriter";
 
-const UserChat = ({ val, projectData }) => {
+const UserChat = ({ val, projectData, bottomRef }) => {
   return (
     <>
       {val?.question && (
@@ -60,6 +60,7 @@ const UserChat = ({ val, projectData }) => {
           </div>
         </li>
       )}
+      <div ref={bottomRef} />
     </>
   );
 };

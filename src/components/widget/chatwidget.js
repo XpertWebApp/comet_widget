@@ -17,6 +17,8 @@ import {
   handleFormClick,
   handleSubmit,
 } from "@/helper/functions";
+import { post } from "@/pages/api/apis";
+import toast from "toastr";
 
 const socketIo = socketIOClient(process.env.WEB_API_URL);
 
@@ -38,6 +40,7 @@ const ChatWidget = () => {
   const [chatagent, setChatAgent] = useState(false);
   const [chatcontinue, setChatContinue] = useState(true);
   const [ratingBox, setRatingBox] = useState(false);
+  const [withAgentSatus, setWithAgentSatus] = useState(false);
 
   const handleChatagent = () => {
     setChatAgent(true);
@@ -152,6 +155,22 @@ const ChatWidget = () => {
     return stars;
   };
 
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [message, messages]);
+
+  const handleChatWithAgent = async () => {
+    const res = await post("notification/send", {
+      project_id: projectData._id,
+      chat_id: chatData._id,
+    });
+    if (res && res.data && res.data.status) {
+      setWithAgentSatus(true)
+    } else {
+      toast.error(res.data.message);
+    }
+  };
+
   return (
     <>
       <div className="chat-widget-wrapper">
@@ -192,6 +211,7 @@ const ChatWidget = () => {
                                 val={val}
                                 projectData={projectData}
                                 loading={loading}
+                                bottomRef={bottomRef}
                               />
                             </>
                           );
@@ -207,6 +227,7 @@ const ChatWidget = () => {
                           chatagent={chatagent}
                           handleChatcht={handleChatcht}
                           rating={rating}
+                          handleChatWithAgent={handleChatWithAgent}
                         />
                       )}
                     </ul>
