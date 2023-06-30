@@ -1,4 +1,6 @@
 import { ChatUser } from "@/assets/icon";
+import moment from "moment";
+import { Typewriter } from "react-simple-typewriter";
 
 const WelComeMessage = ({ projectData }) => {
   return (
@@ -15,11 +17,14 @@ const WelComeMessage = ({ projectData }) => {
           </span>
           <div className="chating">
             <p style={{ color: projectData?.text_color }}>
-              {" "}
-              Hello! How may I assist you today?{" "}
+              <Typewriter
+                words={["Hello! How may I assist you today?"]}
+                typeSpeed={20}
+                delaySpeed={10}
+              />
             </p>
             <span className="time" style={{ color: projectData?.text_color }}>
-              10:06 am
+              {moment(new Date()).format("hh:mm A")}
             </span>
           </div>
         </div>

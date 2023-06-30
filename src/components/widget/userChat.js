@@ -1,4 +1,5 @@
 import { ChatUser } from "@/assets/icon";
+import { Typewriter } from "react-simple-typewriter";
 
 const UserChat = ({ val, projectData }) => {
   return (
@@ -11,7 +12,13 @@ const UserChat = ({ val, projectData }) => {
               "border-color": projectData?.text_container,
             }}
           >
-            <p style={{ color: projectData?.text_color }}>{val.question}</p>
+            <p style={{ color: projectData?.text_color }}>
+              <Typewriter
+                words={[val?.question]}
+                typeSpeed={20}
+                delaySpeed={10}
+              />
+            </p>
             <span className="time" style={{ color: projectData?.text_color }}>
               {val?.resTime}
             </span>
@@ -35,7 +42,11 @@ const UserChat = ({ val, projectData }) => {
                   color: projectData?.text_color,
                 }}
               >
-                {val.answer}
+                <Typewriter
+                  words={[val?.answer]}
+                  typeSpeed={20}
+                  delaySpeed={10}
+                />
               </p>
               <span
                 className="time"
