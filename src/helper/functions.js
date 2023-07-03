@@ -31,9 +31,10 @@ export const handleSubmit = async (
     const obj = {
       question: msg,
       history: history,
-      project_id: projectData._id,
-      chat_id: chatData._id,
-      user_id: senderData._id,
+      project_id: projectData?._id,
+      chat_id: chatData?._id,
+      user_id: senderData?._id,
+      receiver_id: "",
     };
     setLoading(true);
     let obj1 = {
@@ -92,7 +93,7 @@ export const getIpData = async (
   }
 };
 
-export const handleChange = (e, setError, setFormData, formData) => {
+export const handleChange = (e, setError, setFormData, formData, error) => {
   let val = "";
   if (e.target.name == "email") {
     val = e.target.value.trim();
@@ -112,7 +113,7 @@ export const handleChange = (e, setError, setFormData, formData) => {
   setFormData({ ...formData, [e.target.name]: val });
 };
 
-export const handleFormClick = async (e,isValid, formData, setIpAddress) => {
+export const handleFormClick = async (e, isValid, formData, setIpAddress) => {
   if (isValid()) {
     let ipAdd = localStorage.getItem("ipAddress");
     if (!ipAdd) {

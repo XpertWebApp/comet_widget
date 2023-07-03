@@ -57,7 +57,7 @@ const ChatWidget = () => {
 
   useEffect(() => {
     socketIo.emit("onChatConnect", {
-      chat_id: chatData._id,
+      chat_id: chatData?._id,
     });
   }, [chatData]);
 
@@ -161,11 +161,11 @@ const ChatWidget = () => {
 
   const handleChatWithAgent = async () => {
     const res = await post("notification/send", {
-      project_id: projectData._id,
-      chat_id: chatData._id,
+      project_id: projectData?._id,
+      chat_id: chatData?._id,
     });
     if (res && res.data && res.data.status) {
-      setWithAgentSatus(true)
+      setWithAgentSatus(true);
     } else {
       toast.error(res.data.message);
     }
@@ -194,7 +194,13 @@ const ChatWidget = () => {
                         <UserForm
                           formData={formData}
                           handleChange={(e) =>
-                            handleChange(e, setError, setFormData, formData)
+                            handleChange(
+                              e,
+                              setError,
+                              setFormData,
+                              formData,
+                              error
+                            )
                           }
                           error={error}
                           handleFormClick={(e) =>
