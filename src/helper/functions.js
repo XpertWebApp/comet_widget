@@ -59,7 +59,7 @@ export const handleSubmit = async (
       setLoading(false);
     } else {
       setLoading(false);
-      toast.error(res.data.message);
+      toast.error(res?.data?.message);
     }
     // await socketIo.emit("sendMsg", {
     //   chat_id: chatData._id,
@@ -131,7 +131,7 @@ export const handleFormClick = async (e, isValid, formData, setIpAddress) => {
         localStorage.setItem("ipAddress", ipAdd);
         setIpAddress(ipAdd);
       } else {
-        toast.error(res.data.message);
+        toast.error(res?.data?.message);
       }
     }
   }

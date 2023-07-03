@@ -56,6 +56,19 @@
                     display: inline-block;
                     width: 100%;
                     &.sender{
+                        .loder-chat{
+                            span{
+                                background: #EEF0F7;
+                                padding: 7px 14px;
+                                border-radius: 6px;
+                                max-width: 40px;
+                                span{
+                                    width: 8px!important;
+                                    height: 8px!important;
+                                    padding: 0px;
+                                }
+                            }
+                        }
                         .chat-field{
                             background: #EEF0F7;
                             border: 1px solid #483F54;
@@ -73,7 +86,7 @@
                                     height: auto;
                                 }
                             }
-                            p{
+                            p,p span{
                                 font-style: normal;
                                 font-weight: 400;
                                 font-size: 14px;
@@ -83,6 +96,7 @@
                                 padding: 0px;
                                 width: 100%;
                                 padding-right: 20px;
+                                margin-bottom: 6px;
                             }
                             span{
                                 font-style: normal;
@@ -110,7 +124,7 @@
                             border-radius: 18px;
                             padding: 4px 20px;
                             display: inline-block;
-                            p{
+                            p,p span{
                                 @include plusFontFamily;
                                 font-style: normal;
                                 font-weight: 400;
@@ -119,6 +133,7 @@
                                 color: #333333;
                                 width: 100%;
                                 padding-right: 20px;
+                                margin-bottom: 6px;
                             }
                             span{
                                 @include plusFontFamily;
@@ -210,6 +225,9 @@
                 height: 35px;
                   width: 100%;
                   padding-left: 16px;
+                  &.messageError{
+                    border-color: rgb(210, 79, 15);
+                  }
             }
             .chatsend{
                 position: absolute;

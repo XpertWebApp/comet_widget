@@ -167,7 +167,7 @@ const ChatWidget = () => {
     if (res && res.data && res.data.status) {
       setWithAgentSatus(true);
     } else {
-      toast.error(res.data.message);
+      toast.error(res?.data?.message);
     }
   };
 
