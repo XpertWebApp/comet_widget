@@ -37,11 +37,11 @@ const ChatWidget = () => {
   const [senderData, setSenderData] = useState({});
   const [chatData, setChatData] = useState({});
   const [messages, setMessages] = useState([
-    // {
-    //   message: "Hello! How may I assist you today?",
-    //   sender: "bot",
-    //   resTime: moment(new Date()).format("hh:mm A"),
-    // },
+    {
+      message: "Hello! How may I assist you today?",
+      sender: "bot",
+      resTime: moment(new Date()).format("hh:mm A"),
+    },
   ]);
   const [history, setHistory] = useState([]);
   const [chatagent, setChatAgent] = useState(false);
@@ -158,6 +158,9 @@ const ChatWidget = () => {
 
   const HandleWidget = () => {
     setWidgetShow(!widgetshow);
+    setChatContinue(true);
+    setChatAgent(false);
+    setRatingBox(false);
   };
 
   const handleStarClick = (selectedRating) => {
@@ -193,6 +196,7 @@ const ChatWidget = () => {
     const res = await post("notification/send", {
       project_id: projectData?._id,
       chat_id: chatData?._id,
+      user_id: senderData._id,
     });
     if (res && res.data && res.data.status) {
       setWithAgentSatus(true);
@@ -264,7 +268,15 @@ const ChatWidget = () => {
                           }
                           error={error}
                           handleFormClick={(e) =>
-                            handleFormClick(e, isValid, formData, setIpAddress)
+                            handleFormClick(
+                              e,
+                              isValid,
+                              formData,
+                              setIpAddress,
+                              setChatAgent,
+                              setChatContinue,
+                              setRatingBox
+                            )
                           }
                         />
                       )}

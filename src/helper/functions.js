@@ -148,7 +148,15 @@ export const handleChange = (e, setError, setFormData, formData, error) => {
   setFormData({ ...formData, [e.target.name]: val });
 };
 
-export const handleFormClick = async (e, isValid, formData, setIpAddress) => {
+export const handleFormClick = async (
+  e,
+  isValid,
+  formData,
+  setIpAddress,
+  setChatAgent,
+  setChatContinue,
+  setRatingBox
+) => {
   const urlParams = new URLSearchParams(window.location.search);
   const Api_Key = urlParams.get("api_key");
   if (isValid()) {
@@ -168,6 +176,9 @@ export const handleFormClick = async (e, isValid, formData, setIpAddress) => {
       if (res && res.status == 200) {
         localStorage.setItem("ipAddress", ipAdd);
         setIpAddress(ipAdd);
+        setChatAgent(false);
+        setRatingBox(false);
+        setChatContinue(true);
       } else {
         toast.error(res?.data?.message);
       }
