@@ -48,15 +48,20 @@ const ChatWidget = () => {
   const [chatcontinue, setChatContinue] = useState(true);
   const [ratingBox, setRatingBox] = useState(true);
   const [withAgentSatus, setWithAgentSatus] = useState(false);
-
-  // useEffect(() => {
-  //   messages.push({
-  //     message: "Hello! How may I assist you today?",
-  //     sender: "bot",
-  //     resTime: moment(new Date()).format("hh:mm A"),
-  //   });
-  //   setMessages(messages);
-  // }, [messages]);
+  let messagesRef = useRef();
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+  useEffect(() => {
+    setMessages([
+      ...messagesRef.current,
+      {
+        message: "Hello! How may I assist you today?",
+        sender: "bot",
+        resTime: moment(new Date()).format("hh:mm A"),
+      },
+    ]);
+  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
