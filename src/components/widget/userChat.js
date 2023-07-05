@@ -1,10 +1,13 @@
 import { ChatUser } from "@/assets/icon";
+import moment from "moment";
 import { Typewriter } from "react-simple-typewriter";
 
 const UserChat = ({ val, projectData, bottomRef }) => {
   return (
     <>
-      {val?.question && (
+      {val?.sender == "member" ||
+      val?.sender == "bot" ||
+      val?.sender == "admin" ? (
         <li className="reply">
           <div
             className="chat-field"
@@ -14,18 +17,20 @@ const UserChat = ({ val, projectData, bottomRef }) => {
           >
             <p style={{ color: projectData?.text_color }}>
               <Typewriter
-                words={[val?.question]}
+                words={[val?.message]}
                 typeSpeed={20}
                 delaySpeed={10}
               />
             </p>
-            <span className="time" style={{ color: projectData?.text_color }}>
-              {val?.resTime}
+            <span className="time">
+              {moment(val.createdAt).format("HH:mm A")}
             </span>
           </div>
         </li>
+      ) : (
+        ""
       )}
-      {val?.answer && (
+      {val?.sender == "user" ? (
         <li className="sender">
           <div
             className="chat-field"
@@ -43,24 +48,20 @@ const UserChat = ({ val, projectData, bottomRef }) => {
                 }}
               >
                 <Typewriter
-                  words={[val?.answer]}
+                  words={[val?.message]}
                   typeSpeed={20}
                   delaySpeed={10}
                 />
               </p>
-              <span
-                className="time"
-                style={{
-                  color: projectData?.text_color,
-                }}
-              >
-                {val?.messaTime}
+              <span className="time">
+                {moment(val.createdAt).format("HH:mm A")}
               </span>
             </div>
           </div>
         </li>
+      ) : (
+        ""
       )}
-      <div ref={bottomRef} />
     </>
   );
 };

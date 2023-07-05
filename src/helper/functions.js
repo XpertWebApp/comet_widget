@@ -3,8 +3,6 @@ import axios from "axios";
 import moment from "moment";
 import toast from "toastr";
 
-const date = new Date();
-
 export const handleSubmit = async (
   e,
   isMessageValid,
@@ -19,54 +17,89 @@ export const handleSubmit = async (
   setHistory,
   setMessages,
   bottomRef,
+  setChatAgent,
+  setChatContinue,
   setRatingBox,
   setError
 ) => {
   e.preventDefault();
-  const messTimes = moment(date).format("hh:mm A");
-  const resTime = moment(date).format("hh:mm A");
+  if (isMessageValid()) {
+    if (chatData?._id) {
+      let msg = message;
+      setMessage("");
+      const obj = {
+        question: msg,
+        history: history,
+        project_id: projectData?._id,
+        chat_id: chatData?._id,
+        user_id: senderData?._id,
+        receiver_id: "",
+      };
+      setLoading(true);
+      let obj1 = {
+        message: msg,
+        createdAt: new Date(),
+        sender: "user",
+      };
+      messages.push(obj1);
+      const res = await post("chat/chatWithBot", obj);
+      if (res && res.data && res.data.status) {
+        const obj2 = {
+          createdAt: new Date(),
+          sender: "member",
+          message: res?.data?.message?.text,
+        };
+        messages.push(obj2);
+
+        setHistory([...history, [message, res?.data?.message?.text]]);
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        setMessages(messages);
+        if (messages.length % 5 === 0) {
+          setRatingBox(true);
+        } else {
+          setRatingBox(false);
+        }
+        setError("");
+        setLoading(false);
+      } else {
+        setLoading(false);
+        toast.error(res?.data?.message);
+      }
+    }
+  }
+};
+
+export const handleMemberChatSubmit = async (
+  e,
+  isMessageValid,
+  message,
+  setMessage,
+  chatData,
+  senderData,
+  messages,
+  socketIo
+) => {
+  const messTimes = moment(new Date()).format("hh:mm A");
+  e.preventDefault();
   if (isMessageValid()) {
     let msg = message;
-    setMessage("");
-    const obj = {
-      question: msg,
-      history: history,
-      project_id: projectData?._id,
-      chat_id: chatData?._id,
-      user_id: senderData?._id,
-      receiver_id: "",
-    };
-    setLoading(true);
     let obj1 = {
-      question: msg,
-      resTime: messTimes,
+      message: msg,
+      sender: "user",
+      messaTime: messTimes,
     };
     messages.push(obj1);
-    const res = await post("chat/chatWithBot", obj);
-    if (res && res.data && res.data.status) {
-      obj1.messaTime = resTime;
-      obj1.answer = res?.data?.message?.text;
-      setHistory([...history, [message, res?.data?.message?.text]]);
-      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-      setMessages(messages);
-      if (messages.length % 5 === 0) {
-        setRatingBox(true);
-        console.log("Showing modal...");
-      } else {
-        setRatingBox(false);
-      }
-      setError("");
-      setLoading(false);
-    } else {
-      setLoading(false);
-      toast.error(res?.data?.message);
-    }
-    // await socketIo.emit("sendMsg", {
-    //   chat_id: chatData._id,
-    //   user_id: senderData._id,
-    //   message: msg,
-    //   type: "user",
-    // });
+    setMessage("");
+    const objNew =
+      chatData && chatData.members.find((val) => val.status == "active");
+    console.log(objNew, "objNewobjNewobjNew");
+    await socketIo.emit("sendMsg", {
+      chat_id: chatData?._id,
+      user_id: senderData?._id,
+      message: msg,
+      type: "user",
+      receiver_id: objNew?.id,
+    });
   }
 };
 
@@ -75,18 +108,20 @@ export const getIpData = async (
   ipAddress,
   setSenderData,
   setProjectData,
-  setChatData
+  setChatData,
+  Api_Key
 ) => {
   setLoader(true);
   if (ipAddress) {
-    const res = await get(
-      `user/getWithIp?ip=${ipAddress}&api_key=${"a34449be63e668ad39b5ff6b624dfeaeadd97b76c47c25ce2263f1bb823af02c"}`
-    );
+    const res = await get(`user/getWithIp?ip=${ipAddress}&api_key=${Api_Key}`);
     if (res?.data?.status) {
       setSenderData(res.data.user);
       setProjectData(res.data.project);
       setChatData(res.data.chats);
       setLoader(true);
+    } else {
+      localStorage.removeItem("ipAddress");
+      toast.error(res.data.message);
     }
   } else {
     setLoader(true);
@@ -114,6 +149,8 @@ export const handleChange = (e, setError, setFormData, formData, error) => {
 };
 
 export const handleFormClick = async (e, isValid, formData, setIpAddress) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const Api_Key = urlParams.get("api_key");
   if (isValid()) {
     let ipAdd = localStorage.getItem("ipAddress");
     if (!ipAdd) {
@@ -126,6 +163,7 @@ export const handleFormClick = async (e, isValid, formData, setIpAddress) => {
       const res = await post("user/createUser", {
         ...formData,
         ip: ipAdd,
+        api_key: Api_Key,
       });
       if (res && res.status == 200) {
         localStorage.setItem("ipAddress", ipAdd);

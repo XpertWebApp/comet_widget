@@ -23,9 +23,7 @@ const WelComeMessage = ({ projectData }) => {
                 delaySpeed={10}
               />
             </p>
-            <span className="time" style={{ color: projectData?.text_color }}>
-              {moment(new Date()).format("hh:mm A")}
-            </span>
+            <span className="time">{moment(new Date()).format("hh:mm A")}</span>
           </div>
         </div>
       </li>

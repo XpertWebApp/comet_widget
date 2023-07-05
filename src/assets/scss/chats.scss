@@ -56,6 +56,7 @@
                     display: inline-block;
                     width: 100%;
                     &.sender{
+                        text-align: right;
                         .loder-chat{
                             span{
                                 background: #EEF0F7;
@@ -87,7 +88,7 @@
                                     height: auto;
                                 }
                             }
-                            p,p span{
+                            p{
                                 font-style: normal;
                                 font-weight: 400;
                                 font-size: 14px;
@@ -99,7 +100,7 @@
                                 padding-right: 20px;
                                 margin-bottom: 6px;
                             }
-                            span{
+                            .time{
                                 font-style: normal;
                                 font-weight: 400;
                                 font-size: 12px;
@@ -116,7 +117,7 @@
                     &.reply{
                         display: block;
                         width: 100%;
-                        text-align: right;
+                        text-align: left;
                         position: relative;
                         .chat-field{
                             background: #FFFFFF;
@@ -125,7 +126,7 @@
                             border-radius: 18px;
                             padding: 4px 20px;
                             display: inline-block;
-                            p,p span{
+                            p{
                                 @include plusFontFamily;
                                 font-style: normal;
                                 font-weight: 400;
@@ -136,7 +137,7 @@
                                 padding-right: 20px;
                                 margin-bottom: 6px;
                             }
-                            span{
+                            .time{
                                 @include plusFontFamily;
                                 font-style: normal;
                                 font-weight: 400;
