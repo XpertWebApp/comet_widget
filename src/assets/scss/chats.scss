@@ -113,7 +113,17 @@
                             }
                         }   
                     }
-                   
+                    &.request{
+                        text-align: center;
+                        background: #e7ebeb;
+                        padding: 5px;
+                        border-radius: 6px;
+                        div{
+                            p{
+                                font-size: 14px;
+                            }
+                        }
+                    }
                     &.reply{
                         display: block;
                         width: 100%;
@@ -124,8 +134,9 @@
                             border: 1px solid rgba(0, 0, 0, 0.35);
                             box-shadow: 1px 1px 7px 5px rgba(0, 0, 0, 0.04);
                             border-radius: 18px;
-                            padding: 4px 20px;
+                            padding: 10px 20px;
                             display: inline-block;
+                            max-width:78%;
                             p{
                                 @include plusFontFamily;
                                 font-style: normal;

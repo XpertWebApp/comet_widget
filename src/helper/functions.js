@@ -40,6 +40,7 @@ export const handleSubmit = async (
         message: msg,
         createdAt: new Date(),
         sender: "user",
+        type: "message",
       };
       messages.push(obj1);
       const res = await post("chat/chatWithBot", obj);
@@ -47,6 +48,7 @@ export const handleSubmit = async (
         const obj2 = {
           createdAt: new Date(),
           sender: "member",
+          type: "message",
           message: res?.data?.message?.text,
         };
         messages.push(obj2);
@@ -57,7 +59,7 @@ export const handleSubmit = async (
         if (messages.length % 5 === 0) {
           setRatingBox(true);
         } else {
-          setRatingBox(false);
+          // setRatingBox(false);
         }
         setError("");
         setLoading(false);
@@ -86,13 +88,13 @@ export const handleMemberChatSubmit = async (
     let obj1 = {
       message: msg,
       sender: "user",
+      type : "message",
       messaTime: messTimes,
     };
     messages.push(obj1);
     setMessage("");
     const objNew =
       chatData && chatData.members.find((val) => val.status == "active");
-    console.log(objNew, "objNewobjNewobjNew");
     await socketIo.emit("sendMsg", {
       chat_id: chatData?._id,
       user_id: senderData?._id,
@@ -121,7 +123,7 @@ export const getIpData = async (
       setLoader(true);
     } else {
       localStorage.removeItem("ipAddress");
-      toast.error(res.data.message);
+      toast.error(res?.data?.message);
     }
   } else {
     setLoader(true);

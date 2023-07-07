@@ -17,7 +17,7 @@ const MessageForm = ({
       <div className="send-box">
         <Form
           onSubmit={
-            loading || ratingBox
+            loading
               ? (e) => {
                   e.preventDefault();
                 }

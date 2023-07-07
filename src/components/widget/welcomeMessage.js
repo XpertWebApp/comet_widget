@@ -5,26 +5,21 @@ import { Typewriter } from "react-simple-typewriter";
 const WelComeMessage = ({ projectData }) => {
   return (
     <>
-      <li className="sender">
+      <li className="reply">
         <div
           className="chat-field"
           style={{
             borderColor: projectData?.user_text_container,
           }}
         >
-          <span className="user-icon">
-            <ChatUser />
-          </span>
-          <div className="chating">
-            <p style={{ color: projectData?.text_color }}>
-              <Typewriter
-                words={["Hello! How may I assist you today?"]}
-                typeSpeed={20}
-                delaySpeed={10}
-              />
-            </p>
-            <span className="time">{moment(new Date()).format("hh:mm A")}</span>
-          </div>
+          <p style={{ color: projectData?.text_color }}>
+            <Typewriter
+              words={["Hello! How may I assist you today?"]}
+              typeSpeed={20}
+              delaySpeed={10}
+            />
+          </p>
+          <span className="time">{moment(new Date()).format("hh:mm A")}</span>
         </div>
       </li>
     </>

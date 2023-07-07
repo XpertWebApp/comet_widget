@@ -20,10 +20,12 @@ import {
 import { get, post } from "@/pages/api/apis";
 import toast from "toastr";
 import moment from "moment";
+import WelComeMessage from "./welcomeMessage";
 
 const socketIo = socketIOClient(process.env.WEB_API_URL);
 
 const ChatWidget = () => {
+  let messagesRef = useRef();
   const bottomRef = useRef(null);
   const [widgetshow, setWidgetShow] = useState(false);
   const [rating, setRating] = useState(0);
@@ -36,47 +38,59 @@ const ChatWidget = () => {
   const [projectData, setProjectData] = useState({});
   const [senderData, setSenderData] = useState({});
   const [chatData, setChatData] = useState({});
-  const [messages, setMessages] = useState([
-    {
-      message: "Hello! How may I assist you today?",
-      sender: "bot",
-      resTime: moment(new Date()).format("hh:mm A"),
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [history, setHistory] = useState([]);
   const [chatagent, setChatAgent] = useState(false);
   const [chatcontinue, setChatContinue] = useState(true);
-  const [ratingBox, setRatingBox] = useState(true);
+  const [ratingBox, setRatingBox] = useState(false);
   const [withAgentSatus, setWithAgentSatus] = useState(false);
-  let messagesRef = useRef();
+  const [clicked, setclicked] = useState(false);
+
+  useEffect(() => {
+    if (messages.length > 1 && !withAgentSatus)
+      messages.push({
+        message: "Hello! How may I assist you today?",
+        sender: "bot",
+        type: "message",
+        resTime: moment(new Date()).format("hh:mm A"),
+      });
+    setMessages(messages);
+  }, [messages, withAgentSatus]);
+
+  useEffect(() => {
+    if (withAgentSatus)
+      messages.push({
+        message: "Please wait till we are connected you with our agent!",
+        sender: "bot",
+        type: "newrequest",
+      });
+    setMessages(messages);
+  }, [withAgentSatus, messages]);
+
   useEffect(() => {
     messagesRef.current = messages;
   }, [messages]);
-  useEffect(() => {
-    setMessages([
-      ...messagesRef.current,
-      {
-        message: "Hello! How may I assist you today?",
-        sender: "bot",
-        resTime: moment(new Date()).format("hh:mm A"),
-      },
-    ]);
-  }, []);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [message, messages]);
-
-  useEffect(() => {
-    const ip = localStorage.getItem("ipAddress");
-    setIpAddress(ip);
-  }, []);
 
   useEffect(() => {
     socketIo.emit("onChatConnect", {
       chat_id: chatData?._id,
     });
   }, [chatData]);
+
+  useEffect(() => {
+    if (chatData?._id) getSingleChat();
+  }, [chatData]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 1000);
+  }, [messages, message, clicked]);
+
+  useEffect(() => {
+    const ip = localStorage.getItem("ipAddress");
+    setIpAddress(ip);
+  }, []);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -93,15 +107,13 @@ const ChatWidget = () => {
     } else {
       setLoader(true);
     }
-  }, [ipAddress]);
-
-  useEffect(() => {
-    if (chatData?._id) getSingleChat();
-  }, [chatData]);
+  }, [ipAddress, withAgentSatus]);
 
   useEffect(() => {
     socketIo.on("message", (data) => {
+      console.log(data, "data");
       if (!messages.find((val) => val.message == data)) {
+        setWithAgentSatus(false);
         setMessages([
           ...messages,
           {
@@ -163,9 +175,13 @@ const ChatWidget = () => {
 
   const HandleWidget = () => {
     setWidgetShow(!widgetshow);
+    setclicked(true);
     setChatContinue(true);
     setChatAgent(false);
     setRatingBox(false);
+    setTimeout(() => {
+      setclicked(false);
+    }, 1000);
   };
 
   const handleStarClick = (selectedRating) => {
@@ -198,18 +214,22 @@ const ChatWidget = () => {
   };
 
   const handleChatWithAgent = async () => {
-    const res = await post("notification/send", {
-      project_id: projectData?._id,
-      chat_id: chatData?._id,
-      user_id: senderData._id,
-    });
-    if (res && res.data && res.data.status) {
-      setWithAgentSatus(true);
-      setChatContinue(false);
-      setChatAgent(false);
-      setRatingBox(false);
-    } else {
-      toast.error(res?.data?.message);
+    if (senderData?._id) {
+      const res = await post("notification/send", {
+        project_id: projectData?._id,
+        chat_id: chatData?._id,
+        user_id: senderData?._id,
+      });
+      if (res && res.data && res.data.status) {
+        setWithAgentSatus(true);
+        setChatContinue(false);
+        setChatAgent(false);
+        setRatingBox(false);
+      } else {
+        setChatContinue(true);
+        setWithAgentSatus(false);
+        toast.error(res?.data?.message);
+      }
     }
   };
 
@@ -217,7 +237,7 @@ const ChatWidget = () => {
     if (chatData?._id) {
       const res = await get(`chat/getSingle?chat_id=${chatData?._id}`);
       if (res?.data?.status) {
-        setMessages(res.data.message[0]?.messages);
+        setMessages(res?.data?.message[0]?.messages);
       } else {
         toast.error(res?.data?.message);
       }
@@ -242,8 +262,7 @@ const ChatWidget = () => {
 
                   <div className="msg-body">
                     <ul>
-                      {messages &&
-                        messages.length > 0 &&
+                      {messages && messages.length > 0 ? (
                         messages.map((val) => {
                           return (
                             <>
@@ -256,8 +275,10 @@ const ChatWidget = () => {
                               />
                             </>
                           );
-                        })}
-                      <div ref={bottomRef} />
+                        })
+                      ) : (
+                        <WelComeMessage projectData={projectData} />
+                      )}
 
                       {loader && !ipAddress && (
                         <UserForm
@@ -303,6 +324,7 @@ const ChatWidget = () => {
                           handleChatWithAgent={handleChatWithAgent}
                         />
                       )}
+                      <div ref={bottomRef} />
                     </ul>
                   </div>
                   <MessageForm
