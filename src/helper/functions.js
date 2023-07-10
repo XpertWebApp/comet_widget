@@ -56,7 +56,7 @@ export const handleSubmit = async (
         setHistory([...history, [message, res?.data?.message?.text]]);
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
         setMessages(messages);
-        if (messages.length % 5 === 0) {
+        if (messages.length % 5) {
           setRatingBox(true);
         } else {
           // setRatingBox(false);
@@ -88,7 +88,7 @@ export const handleMemberChatSubmit = async (
     let obj1 = {
       message: msg,
       sender: "user",
-      type : "message",
+      type: "message",
       messaTime: messTimes,
     };
     messages.push(obj1);
@@ -115,15 +115,23 @@ export const getIpData = async (
 ) => {
   setLoader(true);
   if (ipAddress) {
-    const res = await get(`user/getWithIp?ip=${ipAddress}&api_key=${Api_Key}`);
-    if (res?.data?.status) {
-      setSenderData(res.data.user);
-      setProjectData(res.data.project);
-      setChatData(res.data.chats);
-      setLoader(true);
+    if (!Api_Key) {
+      toast.error("API Key is not valid!");
     } else {
-      localStorage.removeItem("ipAddress");
-      toast.error(res?.data?.message);
+      const res = await get(
+        `user/getWithIp?ip=${ipAddress}&api_key=${"Api_Key"}`
+      );
+      if (res?.data?.status) {
+        setSenderData(res.data.user);
+        setProjectData(res.data.project);
+        setChatData(res.data.chats);
+        setLoader(true);
+      } else if (res?.data?.code == "400") {
+        toast.error(res.data.message);
+        localStorage.clear();
+      } else {
+        localStorage.clear();
+      }
     }
   } else {
     setLoader(true);

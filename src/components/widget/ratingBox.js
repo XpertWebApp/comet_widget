@@ -7,7 +7,8 @@ const RatingBox = ({
   chatagent,
   handleChatcht,
   rating,
-  handleChatWithAgent
+  handleChatWithAgent,
+  withAgentSatus,
 }) => {
   return (
     <>
@@ -34,7 +35,12 @@ const RatingBox = ({
               <Button className="cntbtn" onClick={handleChatcht}>
                 Continue
               </Button>
-              <Button className="chtagentbtn" onClick={handleChatWithAgent}>Chat with Agent</Button>
+              <Button
+                className="chtagentbtn"
+                onClick={withAgentSatus ? () => {} : handleChatWithAgent}
+              >
+                Chat with Agent
+              </Button>
             </div>
           </div>
         )}

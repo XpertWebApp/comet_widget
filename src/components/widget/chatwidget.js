@@ -38,29 +38,42 @@ const ChatWidget = () => {
   const [projectData, setProjectData] = useState({});
   const [senderData, setSenderData] = useState({});
   const [chatData, setChatData] = useState({});
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([
+    {
+      message: "Hello! How may I assist you today?",
+      sender: "bot",
+      type: "message",
+      resTime: moment(new Date()).format("hh:mm A"),
+    },
+  ]);
   const [history, setHistory] = useState([]);
   const [chatagent, setChatAgent] = useState(false);
   const [chatcontinue, setChatContinue] = useState(true);
   const [ratingBox, setRatingBox] = useState(false);
   const [withAgentSatus, setWithAgentSatus] = useState(false);
+  const [withAgent, setWithAgent] = useState(false);
   const [clicked, setclicked] = useState(false);
+  const chatMessages = useRef(null);
 
   useEffect(() => {
-    if (messages.length > 1 && !withAgentSatus)
-      messages.push({
-        message: "Hello! How may I assist you today?",
-        sender: "bot",
-        type: "message",
-        resTime: moment(new Date()).format("hh:mm A"),
-      });
-    setMessages(messages);
-  }, [messages, withAgentSatus]);
+    chatMessages.current = messages;
+  }, [messages]);
+
+  // useEffect(() => {
+  //   if (messages.length > 1 && !withAgentSatus)
+  //     messages.push({
+  //       message: "Hello! How may I assist you today?",
+  //       sender: "bot",
+  //       type: "message",
+  //       resTime: moment(new Date()).format("hh:mm A"),
+  //     });
+  //   setMessages(messages);
+  // }, [messages, withAgentSatus]);
 
   useEffect(() => {
-    if (withAgentSatus)
+    if (withAgentSatus && !messages.find((val) => val.type == "newrequest"))
       messages.push({
-        message: "Please wait till we are connected you with our agent!",
+        message: "Please wait till we are connecting you with our agent!",
         sender: "bot",
         type: "newrequest",
       });
@@ -112,10 +125,10 @@ const ChatWidget = () => {
   useEffect(() => {
     socketIo.on("message", (data) => {
       console.log(data, "data");
-      if (!messages.find((val) => val.message == data)) {
+      if (!chatMessages.current.find((val) => val.message == data)) {
         setWithAgentSatus(false);
         setMessages([
-          ...messages,
+          ...chatMessages.current,
           {
             message: data.message,
             sender: data.type,
@@ -125,16 +138,18 @@ const ChatWidget = () => {
         ]);
       }
     });
-  }, [messages]);
+  }, []);
 
   const handleChatagent = () => {
     setChatAgent(true);
     setChatContinue(false);
   };
   const handleChatcht = () => {
-    setChatContinue(false);
+    setChatContinue(true);
+    setWithAgent(false);
     setChatAgent(false);
     setRatingBox(false);
+    setWithAgentSatus(false);
   };
 
   const isValid = () => {
@@ -175,6 +190,7 @@ const ChatWidget = () => {
 
   const HandleWidget = () => {
     setWidgetShow(!widgetshow);
+    setWithAgent(false);
     setclicked(true);
     setChatContinue(true);
     setChatAgent(false);
@@ -222,12 +238,14 @@ const ChatWidget = () => {
       });
       if (res && res.data && res.data.status) {
         setWithAgentSatus(true);
+        setWithAgent(true);
         setChatContinue(false);
         setChatAgent(false);
         setRatingBox(false);
       } else {
         setChatContinue(true);
         setWithAgentSatus(false);
+        setWithAgent(false);
         toast.error(res?.data?.message);
       }
     }
@@ -322,6 +340,7 @@ const ChatWidget = () => {
                           handleChatcht={handleChatcht}
                           rating={rating}
                           handleChatWithAgent={handleChatWithAgent}
+                          withAgentSatus={withAgentSatus}
                         />
                       )}
                       <div ref={bottomRef} />
@@ -333,7 +352,7 @@ const ChatWidget = () => {
                     ipAddress={ipAddress}
                     loading={loading}
                     handleSubmit={
-                      withAgentSatus
+                      withAgent
                         ? (e) =>
                             handleMemberChatSubmit(
                               e,
