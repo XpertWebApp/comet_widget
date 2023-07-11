@@ -2,7 +2,7 @@ import { ChatUser } from "@/assets/icon";
 import moment from "moment";
 import { Typewriter } from "react-simple-typewriter";
 
-const UserChat = ({ val, projectData }) => {
+const UserChat = ({ val, projectData, setNewMessage }) => {
   return (
     <>
       {val?.sender == "member" ||
@@ -22,8 +22,8 @@ const UserChat = ({ val, projectData }) => {
                 ) : (
                   <Typewriter
                     words={[val?.message]}
-                    typeSpeed={20}
-                    delaySpeed={10}
+                    typeSpeed={3}
+                    delaySpeed={5}
                   />
                 )}
               </p>
@@ -61,8 +61,8 @@ const UserChat = ({ val, projectData }) => {
                 ) : (
                   <Typewriter
                     words={[val?.message]}
-                    typeSpeed={20}
-                    delaySpeed={10}
+                    typeSpeed={3}
+                    delaySpeed={5}
                   />
                 )}
               </p>

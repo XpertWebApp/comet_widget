@@ -2,6 +2,7 @@ import { get, post } from "@/pages/api/apis";
 import axios from "axios";
 import moment from "moment";
 import toast from "toastr";
+var counter = 0;
 
 export const handleSubmit = async (
   e,
@@ -23,6 +24,7 @@ export const handleSubmit = async (
   setError
 ) => {
   e.preventDefault();
+
   if (isMessageValid()) {
     if (chatData?._id) {
       let msg = message;
@@ -52,15 +54,17 @@ export const handleSubmit = async (
           message: res?.data?.message?.text,
         };
         messages.push(obj2);
-
         setHistory([...history, [message, res?.data?.message?.text]]);
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
         setMessages(messages);
-        if (messages.length % 5) {
+        counter++;
+        if (counter == 5) {
           setRatingBox(true);
+          counter = 0;
         } else {
-          // setRatingBox(false);
+          setRatingBox(false);
         }
+
         setError("");
         setLoading(false);
       } else {
@@ -119,7 +123,7 @@ export const getIpData = async (
       toast.error("API Key is not valid!");
     } else {
       const res = await get(
-        `user/getWithIp?ip=${ipAddress}&api_key=${"Api_Key"}`
+        `user/getWithIp?ip=${ipAddress}&api_key=${Api_Key}`
       );
       if (res?.data?.status) {
         setSenderData(res.data.user);
@@ -178,19 +182,23 @@ export const handleFormClick = async (
       ipAdd = res.data.ip;
     }
     if (ipAdd) {
-      const res = await post("user/createUser", {
-        ...formData,
-        ip: ipAdd,
-        api_key: Api_Key,
-      });
-      if (res && res.status == 200) {
-        localStorage.setItem("ipAddress", ipAdd);
-        setIpAddress(ipAdd);
-        setChatAgent(false);
-        setRatingBox(false);
-        setChatContinue(true);
+      if (!Api_Key) {
+        toast.error("API key is invalid");
       } else {
-        toast.error(res?.data?.message);
+        const res = await post("user/createUser", {
+          ...formData,
+          ip: ipAdd,
+          api_key: Api_Key,
+        });
+        if (res && res.status == 200) {
+          localStorage.setItem("ipAddress", ipAdd);
+          setIpAddress(ipAdd);
+          setChatAgent(false);
+          setRatingBox(false);
+          setChatContinue(true);
+        } else {
+          toast.error(res?.data?.message);
+        }
       }
     }
   }
