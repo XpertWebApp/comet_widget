@@ -128,9 +128,10 @@ const ChatWidget = () => {
           ...chatMessages.current,
           {
             message: data.message,
-            sender: data.type,
+            sender: data.sender,
             chat_id: data?.chat_id,
             createdAt: new Date(),
+            type: data.type
           },
         ]);
       }
