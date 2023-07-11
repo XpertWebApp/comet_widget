@@ -118,6 +118,7 @@ const ChatWidget = () => {
       setLoader(true);
     }
   }, [ipAddress, withAgentSatus]);
+  
 
   useEffect(() => {
     socketIo.on("message", (data) => {
