@@ -88,7 +88,7 @@ export const handleMemberChatSubmit = async (
     let obj1 = {
       message: msg,
       sender: "user",
-      type : "message",
+      type: "message",
       messaTime: messTimes,
     };
     messages.push(obj1);
@@ -170,19 +170,23 @@ export const handleFormClick = async (
       ipAdd = res.data.ip;
     }
     if (ipAdd) {
-      const res = await post("user/createUser", {
-        ...formData,
-        ip: ipAdd,
-        api_key: Api_Key,
-      });
-      if (res && res.status == 200) {
-        localStorage.setItem("ipAddress", ipAdd);
-        setIpAddress(ipAdd);
-        setChatAgent(false);
-        setRatingBox(false);
-        setChatContinue(true);
+      if (!Api_Key) {
+        toast.error("API key is invalid");
       } else {
-        toast.error(res?.data?.message);
+        const res = await post("user/createUser", {
+          ...formData,
+          ip: ipAdd,
+          api_key: Api_Key,
+        });
+        if (res && res.status == 200) {
+          localStorage.setItem("ipAddress", ipAdd);
+          setIpAddress(ipAdd);
+          setChatAgent(false);
+          setRatingBox(false);
+          setChatContinue(true);
+        } else {
+          toast.error(res?.data?.message);
+        }
       }
     }
   }
