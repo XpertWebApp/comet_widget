@@ -119,7 +119,7 @@ export const getIpData = async (
       toast.error("API Key is not valid!");
     } else {
       const res = await get(
-        `user/getWithIp?ip=${ipAddress}&api_key=${"Api_Key"}`
+        `user/getWithIp?ip=${ipAddress}&api_key=${Api_Key}`
       );
       if (res?.data?.status) {
         setSenderData(res.data.user);
