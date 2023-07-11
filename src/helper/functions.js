@@ -2,6 +2,7 @@ import { get, post } from "@/pages/api/apis";
 import axios from "axios";
 import moment from "moment";
 import toast from "toastr";
+var counter = 0;
 
 export const handleSubmit = async (
   e,
@@ -23,6 +24,7 @@ export const handleSubmit = async (
   setError
 ) => {
   e.preventDefault();
+
   if (isMessageValid()) {
     if (chatData?._id) {
       let msg = message;
@@ -52,15 +54,19 @@ export const handleSubmit = async (
           message: res?.data?.message?.text,
         };
         messages.push(obj2);
-
         setHistory([...history, [message, res?.data?.message?.text]]);
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
         setMessages(messages);
-        if (messages.length % 5) {
+        counter++;
+
+        console.log(counter, "counter");
+        if (counter == 5) {
           setRatingBox(true);
+          counter = 0;
         } else {
-          // setRatingBox(false);
+          setRatingBox(false);
         }
+
         setError("");
         setLoading(false);
       } else {

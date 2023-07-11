@@ -53,6 +53,7 @@ const ChatWidget = () => {
   const [withAgentSatus, setWithAgentSatus] = useState(false);
   const [withAgent, setWithAgent] = useState(false);
   const [clicked, setclicked] = useState(false);
+  const [newMessage, setNewMessage] = useState(false);
   const chatMessages = useRef(null);
 
   useEffect(() => {
@@ -290,6 +291,7 @@ const ChatWidget = () => {
                                 loading={loading}
                                 bottomRef={bottomRef}
                                 withAgentSatus={withAgentSatus}
+                                setNewMessage={setNewMessage}
                               />
                             </>
                           );
