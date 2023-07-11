@@ -58,8 +58,6 @@ export const handleSubmit = async (
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
         setMessages(messages);
         counter++;
-
-        console.log(counter, "counter");
         if (counter == 5) {
           setRatingBox(true);
           counter = 0;

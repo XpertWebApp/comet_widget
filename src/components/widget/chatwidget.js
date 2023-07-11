@@ -121,7 +121,6 @@ const ChatWidget = () => {
 
   useEffect(() => {
     socketIo.on("message", (data) => {
-      console.log(data, "data");
       if (!chatMessages.current.find((val) => val.message == data)) {
         setWithAgentSatus(false);
         setMessages([
