@@ -25,7 +25,6 @@ import WelComeMessage from "./welcomeMessage";
 const socketIo = socketIOClient(process.env.WEB_API_URL);
 
 const ChatWidget = () => {
-  let messagesRef = useRef();
   const bottomRef = useRef(null);
   const [widgetshow, setWidgetShow] = useState(false);
   const [rating, setRating] = useState(0);
@@ -58,6 +57,7 @@ const ChatWidget = () => {
 
   useEffect(() => {
     chatMessages.current = messages;
+    setMessages(chatMessages.current)
   }, [messages]);
 
   // useEffect(() => {
@@ -80,10 +80,6 @@ const ChatWidget = () => {
       });
     setMessages(messages);
   }, [withAgentSatus, messages]);
-
-  useEffect(() => {
-    messagesRef.current = messages;
-  }, [messages]);
 
   useEffect(() => {
     socketIo.emit("onChatConnect", {
@@ -125,10 +121,11 @@ const ChatWidget = () => {
 
   useEffect(() => {
     socketIo.on("message", (data) => {
-      console.log(data, "data--------------------");
+      console.log(data, "data");
+      if (!chatMessages.current.find((val) => val.message == data)) {
         setWithAgentSatus(false);
         setMessages([
-          ...messages,
+          ...chatMessages.current,
           {
             message: data.message,
             sender: data.type,
@@ -136,10 +133,9 @@ const ChatWidget = () => {
             createdAt: new Date(),
           },
         ]);
+      }
     });
-  }, [messages]);
-  console.log(messages, "data--------------------");
-
+  }, []);
 
   const handleChatagent = () => {
     setChatAgent(true);
