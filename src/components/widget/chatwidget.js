@@ -58,20 +58,21 @@ const ChatWidget = () => {
   const chatMessages = useRef(null);
 
   useEffect(() => {
+    const agentStatus = localStorage.getItem("withAgent")
+    if (agentStatus == true) {
+      setWithAgent(agentStatus)
+    } else {
+      setChatContinue(true)
+      setChatAgent(false);
+      setRatingBox(false);
+      setWithAgentSatus(false)
+    }
+  }, [])
+
+  useEffect(() => {
     chatMessages.current = messages;
     setMessages(chatMessages.current)
   }, [messages]);
-
-  // useEffect(() => {
-  //   if (messages.length > 1 && !withAgentSatus)
-  //     messages.push({
-  //       message: "Hello! How may I assist you today?",
-  //       sender: "bot",
-  //       type: "message",
-  //       resTime: moment(new Date()).format("hh:mm A"),
-  //     });
-  //   setMessages(messages);
-  // }, [messages, withAgentSatus]);
 
   useEffect(() => {
     if (withAgentSatus && !messages.find((val) => val.type == "newrequest"))
@@ -128,17 +129,22 @@ const ChatWidget = () => {
   useEffect(() => {
     socketIo.on("message", (data) => {
       if (!chatMessages.current.find((val) => val.message == data)) {
-        setWithAgentSatus(false);
-        setMessages([
-          ...chatMessages.current,
-          {
-            message: data.message,
-            sender: data.sender,
-            chat_id: data?.chat_id,
-            createdAt: new Date(),
-            type: data.type
-          },
-        ]);
+        if (data.type == "request" && data.message == "This chat has been closed.") {
+          localStorage.setItem("withAgent", false)
+          setWithAgentSatus(false);
+        } else {
+          setMessages([
+            ...chatMessages.current,
+            {
+              message: data.message,
+              sender: data.sender,
+              chat_id: data?.chat_id,
+              createdAt: new Date(),
+              type: data.type
+            },
+          ]);
+        }
+
       }
     });
   }, []);
@@ -149,7 +155,7 @@ const ChatWidget = () => {
   };
   const handleChatcht = () => {
     setChatContinue(true);
-    setWithAgent(false);
+    // setWithAgent(false);
     setChatAgent(false);
     setRatingBox(false);
     setWithAgentSatus(false);
@@ -193,7 +199,7 @@ const ChatWidget = () => {
 
   const HandleWidget = () => {
     setWidgetShow(!widgetshow);
-    setWithAgent(false);
+    // setWithAgent(false);
     setclicked(true);
     setChatContinue(true);
     setChatAgent(false);
@@ -241,6 +247,7 @@ const ChatWidget = () => {
       });
       if (res && res.data && res.data.status) {
         setWithAgentSatus(true);
+        localStorage.setItem("withAgent", true)
         setWithAgent(true);
         setChatContinue(false);
         setChatAgent(false);
@@ -264,6 +271,13 @@ const ChatWidget = () => {
       }
     }
   };
+
+  useEffect(() => {
+    if (chatData.status == "completed"
+    ) {
+      setWithAgent(false)
+    }
+  }, [chatData])
 
   return (
     <>

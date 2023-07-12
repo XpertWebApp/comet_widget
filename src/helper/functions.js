@@ -129,6 +129,10 @@ export const getIpData = async (
         setSenderData(res.data.user);
         setProjectData(res.data.project);
         setChatData(res.data.chats);
+        console.log(res?.data?.chats, "res?.data?.chats");
+        if (res?.data?.chats?.members.find((val) => val.status == "inactive")) {
+          localStorage.setItem("withAgent", false)
+        }
         setLoader(true);
       } else if (res?.data?.code == "400") {
         toast.error(res.data.message);
