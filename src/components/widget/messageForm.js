@@ -10,7 +10,7 @@ const MessageForm = ({
   error,
   handleMessageChange,
   projectData,
-  ratingBox,
+  ratingBox, api_key
 }) => {
   return (
     <>
@@ -19,13 +19,13 @@ const MessageForm = ({
           onSubmit={
             ratingBox
               ? (e) => {
-                  e.preventDefault();
-                }
+                e.preventDefault();
+              }
               : loading
-              ? (e) => {
+                ? (e) => {
                   e.preventDefault();
                 }
-              : handleSubmit
+                : handleSubmit
           }
         >
           <input
@@ -36,14 +36,14 @@ const MessageForm = ({
             aria-label="message…"
             placeholder="message…"
             name="message"
-            disabled={loader && !ipAddress ? true : false}
+            disabled={!api_key || (loader && !ipAddress) ? true : false}
             value={message}
             onChange={handleMessageChange}
             style={{ color: projectData?.text_input }}
           />
           <Button
             className="chatsend"
-            disabled={loader && !ipAddress ? true : false}
+            disabled={!api_key || (loader && !ipAddress) ? true : false}
             type="submit"
           >
             <SendIcon text_button={projectData?.text_button} />

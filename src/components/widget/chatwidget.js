@@ -25,6 +25,7 @@ import WelComeMessage from "./welcomeMessage";
 const socketIo = socketIOClient(process.env.WEB_API_URL);
 
 const ChatWidget = () => {
+  toast.options = { preventDuplicates: true };
   const bottomRef = useRef(null);
   const [widgetshow, setWidgetShow] = useState(false);
   const [rating, setRating] = useState(0);
@@ -53,6 +54,7 @@ const ChatWidget = () => {
   const [withAgent, setWithAgent] = useState(false);
   const [clicked, setclicked] = useState(false);
   const [newMessage, setNewMessage] = useState(false);
+  const [api_key, setapi_key] = useState("");
   const chatMessages = useRef(null);
 
   useEffect(() => {
@@ -105,6 +107,7 @@ const ChatWidget = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const Api_Key = urlParams.get("api_key");
+    setapi_key(Api_Key)
     if (ipAddress && Api_Key) {
       getIpData(
         setLoader,
@@ -114,11 +117,13 @@ const ChatWidget = () => {
         setChatData,
         Api_Key
       );
+    } else if (!Api_Key) {
+      toast.error("API key invalid!")
     } else {
       setLoader(true);
     }
   }, [ipAddress, withAgentSatus]);
-  
+
 
   useEffect(() => {
     socketIo.on("message", (data) => {
@@ -353,41 +358,42 @@ const ChatWidget = () => {
                     handleSubmit={
                       withAgent
                         ? (e) =>
-                            handleMemberChatSubmit(
-                              e,
-                              isMessageValid,
-                              message,
-                              setMessage,
-                              chatData,
-                              senderData,
-                              messages,
-                              socketIo
-                            )
+                          handleMemberChatSubmit(
+                            e,
+                            isMessageValid,
+                            message,
+                            setMessage,
+                            chatData,
+                            senderData,
+                            messages,
+                            socketIo
+                          )
                         : (e) =>
-                            handleSubmit(
-                              e,
-                              isMessageValid,
-                              message,
-                              setMessage,
-                              history,
-                              projectData,
-                              chatData,
-                              senderData,
-                              messages,
-                              setLoading,
-                              setHistory,
-                              setMessages,
-                              bottomRef,
-                              setChatAgent,
-                              setChatContinue,
-                              setRatingBox,
-                              setError
-                            )
+                          handleSubmit(
+                            e,
+                            isMessageValid,
+                            message,
+                            setMessage,
+                            history,
+                            projectData,
+                            chatData,
+                            senderData,
+                            messages,
+                            setLoading,
+                            setHistory,
+                            setMessages,
+                            bottomRef,
+                            setChatAgent,
+                            setChatContinue,
+                            setRatingBox,
+                            setError
+                          )
                     }
                     error={error}
                     handleMessageChange={handleMessageChange}
                     projectData={projectData}
                     ratingBox={ratingBox}
+                    api_key={api_key}
                   />
                 </div>
               </div>

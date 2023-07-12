@@ -135,3 +135,11 @@ textarea:-moz-placeholder{
     line-height: 18px;
 
 }
+button[disabled]{
+    pointer-events: auto! important;
+     cursor: not-allowed! important;
+}
+input[disabled]{
+    pointer-events: auto! important;
+     cursor: not-allowed! important;
+}
