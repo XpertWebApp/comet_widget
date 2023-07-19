@@ -35,7 +35,7 @@ const MessageForm = ({
             disabled={loader && !ipAddress ? true : false}
             value={message}
             onChange={handleMessageChange}
-            style={{ color: projectData?.text_input }}
+            // style={{ color: projectData?.text_input }}
           />
           <Button
             className="chatsend"
