@@ -5,7 +5,7 @@ import { Typewriter } from "react-simple-typewriter";
 const WelComeMessage = ({ projectData }) => {
   return (
     <>
-      <li className="reply">
+      <li className="request">
         <div
           className="chat-field"
           style={{
@@ -14,12 +14,11 @@ const WelComeMessage = ({ projectData }) => {
         >
           <p style={{ color: projectData?.text_color }}>
             <Typewriter
-              words={[projectData?.message || "Hello! How may I assist you today?"]}
+              words={[projectData?.message || "Please wait till we are connecting you with our agent!"]}
               typeSpeed={20}
               delaySpeed={10}
             />
           </p>
-          <span className="time">{moment(new Date()).format("hh:mm A")}</span>
         </div>
       </li>
     </>

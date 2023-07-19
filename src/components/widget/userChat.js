@@ -1,15 +1,16 @@
-import { ChatUser } from "@/assets/icon";
-import moment from "moment";
-import { Typewriter } from "react-simple-typewriter";
+import { ChatUser } from '@/assets/icon'
+import moment from 'moment'
+import { Typewriter } from 'react-simple-typewriter'
+import WelComeMessage from './welcomeMessage'
 
-const UserChat = ({ val, projectData, setNewMessage }) => {
+const UserChat = ({ val, projectData, setNewMessage ,withAgentSatus }) => {
   return (
     <>
-      {val?.sender == "member" ||
-      val?.sender == "bot" ||
-      val?.sender == "admin" ? (
+      {val?.sender == 'member' ||
+      val?.sender == 'bot' ||
+      val?.sender == 'admin' ? (
         <>
-          <li className={val?.type == "message" ? "reply" : "request"}>
+          <li className={val?.type == 'message' ? 'reply' : 'request'}>
             <div
               className="chat-field"
               style={{
@@ -28,18 +29,18 @@ const UserChat = ({ val, projectData, setNewMessage }) => {
                 )}
               </p>
 
-              {val?.type == "message" && (
+              {val?.type == 'message' && (
                 <span className="time">
-                  {moment(val.createdAt).format("HH:mm A")}
+                  {moment(val.createdAt).format('HH:mm A')}
                 </span>
               )}
             </div>
           </li>
         </>
       ) : (
-        ""
+        ''
       )}
-      {val?.sender == "user" ? (
+      {val?.sender == 'user' ? (
         <li className="sender">
           <div
             className="chat-field"
@@ -67,15 +68,15 @@ const UserChat = ({ val, projectData, setNewMessage }) => {
                 )}
               </p>
               <span className="time">
-                {moment(val.createdAt).format("HH:mm A")}
+                {moment(val.createdAt).format('HH:mm A')}
               </span>
             </div>
           </div>
         </li>
       ) : (
-        ""
+        ''
       )}
     </>
-  );
-};
-export default UserChat;
+  )
+}
+export default UserChat
