@@ -14,7 +14,7 @@ const WelComeMessage = ({ projectData }) => {
         >
           <p style={{ color: projectData?.text_color }}>
             <Typewriter
-              words={["Hello! How may I assist you today?"]}
+              words={[projectData?.message || "Hello! How may I assist you today?"]}
               typeSpeed={20}
               delaySpeed={10}
             />
