@@ -99,6 +99,7 @@
                                 width: 100%;
                                 padding-right: 20px;
                                 margin-bottom: 6px;
+                                word-break: break-all;
                             }
                             .time{
                                 font-style: normal;
@@ -121,6 +122,7 @@
                         div{
                             p{
                                 font-size: 14px;
+                                word-break: break-all;
                             }
                         }
                     }
@@ -147,6 +149,7 @@
                                 width: 100%;
                                 padding-right: 20px;
                                 margin-bottom: 6px;
+                                word-break: break-all;
                             }
                             .time{
                                 @include plusFontFamily;
