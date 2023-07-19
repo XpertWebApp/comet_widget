@@ -56,7 +56,7 @@
                     display: inline-block;
                     width: 100%;
                     &.sender{
-                        // text-align: right;
+                        text-align: right;
                         .loder-chat{
                             span{
                                 background: #EEF0F7;
@@ -97,7 +97,7 @@
                                 @include plusFontFamily;
                                 padding: 0px;
                                 width: 100%;
-                                padding-right: 20px;
+                                padding-right: 2px;
                                 margin-bottom: 6px;
                             }
                             .time{
