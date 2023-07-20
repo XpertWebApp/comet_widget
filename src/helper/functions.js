@@ -22,52 +22,56 @@ export const handleSubmit = async (
   setRatingBox,
   setError
 ) => {
-  e.preventDefault();
-  if (isMessageValid()) {
-    if (chatData?._id) {
-      let msg = message;
-      setMessage("");
-      const obj = {
-        question: msg,
-        history: history,
-        project_id: projectData?._id,
-        chat_id: chatData?._id,
-        user_id: senderData?._id,
-        receiver_id: "",
-      };
-      setLoading(true);
-      let obj1 = {
-        message: msg,
-        createdAt: new Date(),
-        sender: "user",
-        type: "message",
-      };
-      messages.push(obj1);
-      const res = await post("chat/chatWithBot", obj);
-      if (res && res.data && res.data.status) {
-        const obj2 = {
-          createdAt: new Date(),
-          sender: "member",
-          type: "message",
-          message: res?.data?.message?.text,
+  try {
+    e.preventDefault();
+    if (isMessageValid()) {
+      if (chatData?._id) {
+        let msg = message;
+        setMessage("");
+        const obj = {
+          question: msg,
+          history: history,
+          project_id: projectData?._id,
+          chat_id: chatData?._id,
+          user_id: senderData?._id,
+          receiver_id: "",
         };
-        messages.push(obj2);
+        setLoading(true);1
+        let obj1 = {
+          message: msg,
+          createdAt: new Date(),
+          sender: "user",
+          type: "message",
+        };
+        messages.push(obj1);
+        const res = await post("chat/chatWithBot", obj);
+        if (res && res.data && res.data.status) {
+          const obj2 = {
+            createdAt: new Date(),
+            sender: "member",
+            type: "message",
+            message: res?.data?.message?.text,
+          };
+          messages.push(obj2);
 
-        setHistory([...history, [message, res?.data?.message?.text]]);
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-        setMessages(messages);
-        if (messages.length % 5 === 0) {
-          setRatingBox(true);
+          setHistory([...history, [message, res?.data?.message?.text]]);
+          bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+          setMessages(messages);
+          if (messages.length % 5 === 0) {
+            setRatingBox(true);
+          } else {
+            // setRatingBox(false);
+          }
+          setError("");
+          setLoading(false);
         } else {
-          // setRatingBox(false);
+          setLoading(false);
+          toast.error(res?.data?.message);
         }
-        setError("");
-        setLoading(false);
-      } else {
-        setLoading(false);
-        toast.error(res?.data?.message);
       }
     }
+  } catch (error) {
+    console.log(error, "error")
   }
 };
 
