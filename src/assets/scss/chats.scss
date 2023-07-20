@@ -56,7 +56,12 @@
                     display: inline-block;
                     width: 100%;
                     &.sender{
-                        // text-align: right;
+                        text-align: right;
+                        .chating{
+                            p{
+                                text-align: left;
+                            }
+                        }
                         .loder-chat{
                             span{
                                 background: #EEF0F7;
@@ -78,6 +83,7 @@
                             border-radius: 18px;
                             padding: 4px 20px;
                             display: inline-flex;
+                            max-width: calc(100% - 140px )!important;
                             align-items: baseline;
                             .user-icon{
                                 margin-right: 8px;
