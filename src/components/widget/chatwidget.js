@@ -388,7 +388,7 @@ const ChatWidget = () => {
                       ) : (
                         ''
                       )}
-                      {true && (
+                      {ratingBox && (
                         <RatingBox
                           chatcontinue={chatcontinue}
                           handleChatagent={handleChatagent}
