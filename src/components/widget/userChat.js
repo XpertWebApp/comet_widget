@@ -30,7 +30,6 @@ const UserChat = ({ val, projectData, setNewMessage ,withAgentSatus }) => {
                   />
                 )}
               </p>
-
               {val?.type == 'message' && (
                 <span className="time">
                   {moment(val.createdAt).format('HH:mm A')}
