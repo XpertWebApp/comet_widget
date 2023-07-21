@@ -286,6 +286,7 @@ const ChatWidget = () => {
         chat_id: chatData?._id,
         user_id: senderData?._id,
       })
+      
       if (res && res.data && res.data.status) {
         setWithAgentSatus(true)
         localStorage.setItem('withAgent', true)
