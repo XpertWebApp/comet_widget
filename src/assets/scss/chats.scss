@@ -55,6 +55,26 @@
                     margin: 10px 0px;
                     display: inline-block;
                     width: 100%;
+                    .chat-reply-field{
+                        @include flexAllStart;
+                        .user-icon{
+                            width: 35px;
+                            height: 35px;
+                            min-width: 35px;
+                            background: #D8DCF0;
+                            border-radius: 100%;
+                            margin-left: 10px;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            position: relative;
+                            img{
+                                margin-right: 0px;
+                                width: 18px;
+                                height: auto;
+                            }
+                        }
+                    }
                     &.sender{
                         text-align: right;
                         .chating{
@@ -73,6 +93,30 @@
                                     height: 8px!important;
                                     padding: 0px;
                                     
+                                }
+                            }
+                        }
+                        .chat-user-field{
+                            @include flexAllCenter;
+                            justify-content: flex-end;
+                            .user-icon{
+                                width: 35px;
+                                height: 35px;
+                                min-width: 35px;
+                                background: #D8DCF0;
+                                border-radius: 100%;
+                                margin-right: 10px;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                position: relative;
+                                svg{
+                                    font-size: 16px;
+                                    margin-right: 0px;
+                                    width: 16px;
+                                   path{
+                                    fill: #7364DB;
+                                   }
                                 }
                             }
                         }
