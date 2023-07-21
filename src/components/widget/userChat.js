@@ -4,6 +4,7 @@ import { Typewriter } from "react-simple-typewriter";
 import WelComeMessage from "./welcomeMessage";
 import ChatBoatIcon from "../../assets/img/chatboat-icon.png";
 import Image from "next/image";
+import { timeFunction } from "@/helper/timeAgoFunction";
 const UserChat = ({ val, projectData, setNewMessage, withAgentSatus }) => {
   return (
     <>
@@ -32,7 +33,7 @@ const UserChat = ({ val, projectData, setNewMessage, withAgentSatus }) => {
                 </p>
                 {val?.type == "message" && (
                   <span className="time">
-                    {moment(val.createdAt).format("HH:mm A")}
+                    <span className="time">{timeFunction(val.createdAt)}</span>
                   </span>
                 )}
               </div>
@@ -83,7 +84,7 @@ const UserChat = ({ val, projectData, setNewMessage, withAgentSatus }) => {
                   )}
                 </p>
                 <span className="time">
-                  {moment(val.createdAt).format("HH:mm A")}
+                  <span className="time">{timeFunction(val.createdAt)}</span>
                 </span>
               </div>
             </div>
