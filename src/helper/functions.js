@@ -51,7 +51,7 @@ export const handleSubmit = async (
       if (res && res.data && res.data.status) {
         const obj2 = {
           createdAt: new Date(),
-          sender: 'member',
+          sender: 'bot',
           type: 'message',
           message: res?.data?.message?.text,
         }
