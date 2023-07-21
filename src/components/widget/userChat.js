@@ -3,7 +3,7 @@ import moment from 'moment'
 import { Typewriter } from 'react-simple-typewriter'
 import WelComeMessage from './welcomeMessage'
 
-const UserChat = ({ val, projectData, setNewMessage ,withAgentSatus }) => {
+const UserChat = ({ val, projectData }) => {
   return (
     <>
       {val?.sender == 'member' ||
@@ -28,7 +28,6 @@ const UserChat = ({ val, projectData, setNewMessage ,withAgentSatus }) => {
                   />
                 )}
               </p>
-
               {val?.type == 'message' && (
                 <span className="time">
                   {moment(val.createdAt).format('HH:mm A')}

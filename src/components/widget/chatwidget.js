@@ -46,37 +46,56 @@ const ChatWidget = () => {
   const [withAgentSatus, setWithAgentSatus] = useState(false)
   const [withAgent, setWithAgent] = useState(false)
   const [clicked, setclicked] = useState(false)
-  const [newMessage, setNewMessage] = useState(false)
   const [api_key, setapi_key] = useState('')
   const chatMessages = useRef(null)
 
   useEffect(() => {
     if (messages.length == 0)
-      messages.push({
-        message: 'Hello! How may I assist you today?',
-        sender: 'bot',
-        type: 'message',
-        resTime: moment(new Date()).format('hh:mm A'),
-      })
-    setMessages(messages)
+      setMessages([
+        ...messages,
+        {
+          message: 'Hello! How may I assist you today?',
+          sender: 'bot',
+          type: 'message',
+          resTime: moment(new Date()).format('hh:mm A'),
+        },
+      ])
+    chatMessages.current = messages
   }, [messages])
 
+  // useEffect(() => {
+  //   const msg = {
+  //     message: 'Please wait till we are connecting you with our agent!',
+  //     sender: 'member',
+  //     status: true,
+  //     type: 'request',
+  //     resTime: moment(new Date()).format('hh:mm A'),
+  //   }
+  //   if (withAgentSatus) {
+  //     setMessages([...messages, msg])
+  //   } else {
+  //     let index =
+  //       chatMessages && chatMessages.current && chatMessages.current.length > 0
+  //         ? chatMessages.current.findIndex((val) => val.status)
+  //         : 0
+  //     let arr = [...messages]
+  //     arr[index].status = false
+  //     setMessages(arr)
+  //   }
+  // }, [withAgentSatus])
+
   useEffect(() => {
-    const agentStatus = localStorage.getItem('withAgent')
-    if (agentStatus == 'true') {
-      setWithAgent(true)
-    } else {
-      setChatContinue(true)
-      setChatAgent(false)
-      setRatingBox(false)
+    const pending =
+      localStorage.getItem('pending') && localStorage.getItem('pending')
+    if (pending == 'true' && pending == true) {
+      setWithAgentSatus(true)
     }
   }, [])
 
   useEffect(() => {
-    chatMessages.current = messages
-  }, [messages])
-
-  useEffect(() => {
+    const withAgents =
+      localStorage.getItem('withAgent') &&
+      JSON.parse(localStorage.getItem('withAgent'))
     let newMsg =
       chatData && chatData?.messages && chatData?.messages.length > 0
         ? chatData?.messages.filter((val) => val.sender != 'user')
@@ -84,9 +103,10 @@ const ChatWidget = () => {
     if (newMsg.length > 0) {
       const newField = newMsg[newMsg.length - 1]
       if (
-        newField?.sender != 'bot' &&
-        newField?.type == 'message' &&
-        chatData?.status == 'ongoing'
+        (newField?.sender != 'bot' &&
+          newField?.type == 'message' &&
+          chatData?.status == 'ongoing') ||
+        withAgents
       ) {
         setWithAgent(true)
       } else {
@@ -136,18 +156,29 @@ const ChatWidget = () => {
     } else {
       setLoader(true)
     }
-  }, [ipAddress, withAgentSatus])
+  }, [ipAddress])
 
   useEffect(() => {
     socketIo.on('message', (data) => {
       if (!chatMessages.current.find((val) => val.message == data)) {
         setWithAgentSatus(false)
+        localStorage.setItem('pending', false)
         if (
           data.type == 'request' &&
           data.message == 'This chat has been closed.'
         ) {
           localStorage.setItem('withAgent', false)
           setWithAgent(false)
+          setMessages([
+            ...chatMessages.current,
+            {
+              message: data.message,
+              sender: data.sender,
+              chat_id: data?.chat_id,
+              createdAt: new Date(),
+              type: data.type,
+            },
+          ])
         } else {
           setMessages([
             ...chatMessages.current,
@@ -170,10 +201,8 @@ const ChatWidget = () => {
   }
   const handleChatcht = () => {
     setChatContinue(true)
-    // setWithAgent(false);
     setChatAgent(false)
     setRatingBox(false)
-    // setWithAgentSatus(false)
   }
 
   const isValid = () => {
@@ -214,7 +243,6 @@ const ChatWidget = () => {
 
   const HandleWidget = () => {
     setWidgetShow(!widgetshow)
-    // setWithAgent(false);
     setclicked(true)
     setChatContinue(true)
     setChatAgent(false)
@@ -233,10 +261,8 @@ const ChatWidget = () => {
 
   const renderStars = () => {
     let stars = []
-
     for (let i = 1; i <= 5; i++) {
       const starClass = i <= rating ? 'star selected' : 'star'
-
       stars.push(
         <>
           <Button
@@ -264,6 +290,7 @@ const ChatWidget = () => {
         setWithAgentSatus(true)
         localStorage.setItem('withAgent', true)
         setWithAgent(true)
+        localStorage.setItem('pending', true)
         setChatContinue(false)
         setChatAgent(false)
         setRatingBox(false)
@@ -286,6 +313,12 @@ const ChatWidget = () => {
       }
     }
   }
+  console.log(
+    withAgentSatus,
+    'withAgentSatus++++++++++++++++',
+    withAgent,
+    messages,
+  )
 
   return (
     <>
@@ -305,23 +338,22 @@ const ChatWidget = () => {
 
                   <div className="msg-body">
                     <ul>
-                      {messages && messages.length > 0 ? (
-                        messages.map((val) => {
-                          return (
-                            <>
-                              <UserChat
-                                val={val}
-                                projectData={projectData}
-                                loading={loading}
-                                bottomRef={bottomRef}
-                                withAgentSatus={withAgentSatus}
-                                setNewMessage={setNewMessage}
-                              />
-                            </>
-                          )
-                        })
-                      ) : ""}
-      {withAgentSatus ? <WelComeMessage /> : ''}
+                      {messages && messages.length > 0
+                        ? messages.map((val) => {
+                            return (
+                              <>
+                                <UserChat
+                                  val={val}
+                                  projectData={projectData}
+                                  loading={loading}
+                                  bottomRef={bottomRef}
+                                  withAgentSatus={withAgentSatus}
+                                />
+                              </>
+                            )
+                          })
+                        : ''}
+                      {withAgentSatus ? <WelComeMessage /> : ''}
 
                       {loader && !ipAddress && (
                         <UserForm
