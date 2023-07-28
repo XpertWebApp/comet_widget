@@ -106,6 +106,29 @@ const deletes = async (url) => {
   }
 };
 
+const streamResponseChatGPT = async (url, data) => {
+  try {
+    const AUTH_TOKEN = localStorage.getItem("token");
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: AUTH_TOKEN,
+    };
+
+    const requestOptions = {
+      method: "POST",
+      headers: headers,
+      body: JSON.stringify(data),
+    };
+    const response = await fetch(
+      `${process.env.WEB_API_URL}/${url}`,
+      requestOptions
+    );
+    if (response) return response;
+  } catch (err) {
+    return { data: err?.response?.data };
+  }
+};
+
 export {
   post,
   getSingle,
@@ -114,4 +137,5 @@ export {
   get,
   put,
   deletes,
+  streamResponseChatGPT
 };

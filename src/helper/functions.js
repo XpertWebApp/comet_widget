@@ -1,10 +1,31 @@
-import { get, post } from "@/pages/api/apis";
+import { get, post, streamResponseChatGPT } from "@/pages/api/apis";
 import axios from "axios";
 import moment from "moment";
 import toast from "toastr";
 import { v4 as uuidv4 } from "uuid";
 
 var counter = 0;
+
+export const HandlePromptChunkResponse = async (response) => {
+  const reader = response.body.getReader();
+  let promptResponse = "";
+  const clone = document?.getElementsByTagName("li")[0]?.cloneNode(true);
+  clone.id = "new-prompt-response";
+  document
+    ?.getElementsByTagName("ul")
+    [document?.getElementsByTagName("ul")?.length - 1]?.appendChild(clone);
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    const text = new TextDecoder("utf-8").decode(value);
+    promptResponse += text;
+    document
+      .getElementById("new-prompt-response")
+      .getElementsByTagName("p")[0].innerHTML = promptResponse;
+  }
+  document.getElementById("new-prompt-response").remove();
+  return promptResponse;
+};
 
 export const handleSubmit = async (
   e,
@@ -46,16 +67,18 @@ export const handleSubmit = async (
         type: "message",
       };
       messages.push(obj1);
-      const res = await post("chat/chatWithBot", obj);
-      if (res && res.data && res.data.status) {
+      const res = await streamResponseChatGPT("chat/chatWithBot", obj);
+      if (res && res.body && res.status) {
+        setLoading(false);
+        const promptResponse = await HandlePromptChunkResponse(res);
         const obj2 = {
           createdAt: new Date(),
           sender: "bot",
           type: "message",
-          message: res?.data?.message?.text,
+          message: promptResponse,
         };
         messages.push(obj2);
-        setHistory([...history, [message, res?.data?.message?.text]]);
+        setHistory([...history, [message, promptResponse]]);
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
         setMessages(messages);
         counter++;

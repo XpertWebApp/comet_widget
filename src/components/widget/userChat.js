@@ -20,16 +20,8 @@ const UserChat = ({ val, projectData, setNewMessage, withAgentSatus }) => {
                   borderColor: projectData?.text_container,
                 }}
               >
-                <p style={{ color: projectData?.text_color }}>
-                  {val._id ? (
-                    <>{val?.message}</>
-                  ) : (
-                    <Typewriter
-                      words={[val?.message]}
-                      typeSpeed={3}
-                      delaySpeed={5}
-                    />
-                  )}
+                <p style={{ color: projectData?.text_color,  whiteSpace: 'pre-wrap' }}>
+                  {val?.message}
                 </p>
                 {val?.type == "message" && (
                   <span className="time">
