@@ -150,7 +150,7 @@
                   font-weight: 400;
                   font-size: 14px;
                   line-height: 20px;
-                  color: #333333;
+                  // color: #333333;
                   @include plusFontFamily;
                   padding: 0px;
                   width: 100%;
@@ -196,13 +196,20 @@
                 padding: 10px 20px;
                 display: inline-block;
                 max-width: 78%;
+                ol {
+                  padding-left: 15px;
+                  li {
+                    display: list-item;
+                    list-style: auto;
+                  }
+                }
                 p {
                   @include plusFontFamily;
                   font-style: normal;
                   font-weight: 400;
                   font-size: 14px;
                   line-height: 20px;
-                  color: #333333;
+                  // color: #333333;
                   width: 100%;
                   padding-right: 20px;
                   margin-bottom: 6px;

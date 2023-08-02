@@ -5,6 +5,7 @@ import WelComeMessage from "./welcomeMessage";
 import ChatBoatIcon from "../../assets/img/chatboat-icon.png";
 import Image from "next/image";
 import { timeFunction } from "@/helper/timeAgoFunction";
+import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 const UserChat = ({ val, projectData, setNewMessage, withAgentSatus }) => {
   return (
     <>
@@ -18,11 +19,10 @@ const UserChat = ({ val, projectData, setNewMessage, withAgentSatus }) => {
                 className="chat-field"
                 style={{
                   borderColor: projectData?.text_container,
+                  color: projectData?.text_color,
                 }}
               >
-                <p style={{ color: projectData?.text_color,  whiteSpace: 'pre-wrap' }}>
-                  {val?.message}
-                </p>
+                <ReactMarkdown>{val?.message}</ReactMarkdown>
                 {val?.type == "message" && (
                   <span className="time">
                     <span className="time">{timeFunction(val.createdAt)}</span>
