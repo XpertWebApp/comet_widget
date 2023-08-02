@@ -8,6 +8,7 @@ var counter = 0;
 
 export const HandlePromptChunkResponse = async (response) => {
   const reader = response.body.getReader();
+  const md = window.markdownit(); 
   let promptResponse = "";
   const clone = document?.getElementsByTagName("li")[0]?.cloneNode(true);
   clone.id = "new-prompt-response";
@@ -21,7 +22,7 @@ export const HandlePromptChunkResponse = async (response) => {
     promptResponse += text;
     document
       .getElementById("new-prompt-response")
-      .getElementsByTagName("p")[0].innerHTML = promptResponse;
+      .getElementsByTagName("p")[0].innerHTML = md.render(promptResponse);
   }
   document.getElementById("new-prompt-response").remove();
   return promptResponse;
