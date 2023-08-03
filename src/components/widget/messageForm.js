@@ -1,5 +1,5 @@
-import { Button, Form } from "react-bootstrap";
-import { SendIcon } from "@/assets/icon";
+import { Button, Form } from 'react-bootstrap'
+import { SendIcon } from '@/assets/icon'
 
 const MessageForm = ({
   message,
@@ -10,28 +10,25 @@ const MessageForm = ({
   error,
   handleMessageChange,
   projectData,
-  ratingBox, api_key
+  ratingBox,
+  api_key,
 }) => {
   return (
     <>
       <div className="send-box">
         <Form
           onSubmit={
-            ratingBox
+            loading
               ? (e) => {
-                e.preventDefault();
-              }
-              : loading
-                ? (e) => {
-                  e.preventDefault();
+                  e.preventDefault()
                 }
-                : handleSubmit
+              : handleSubmit
           }
         >
           <input
             type="text"
             className={
-              error?.message ? "form-control messageError" : "form-control"
+              error?.message ? 'form-control messageError' : 'form-control'
             }
             aria-label="message…"
             placeholder="message…"
@@ -51,6 +48,6 @@ const MessageForm = ({
         </Form>
       </div>
     </>
-  );
-};
-export default MessageForm;
+  )
+}
+export default MessageForm
