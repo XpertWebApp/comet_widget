@@ -1,4 +1,4 @@
-import { Button } from "react-bootstrap";
+import { Button } from 'react-bootstrap'
 
 const RatingBox = ({
   chatcontinue,
@@ -8,6 +8,7 @@ const RatingBox = ({
   handleChatcht,
   rating,
   handleChatWithAgent,
+  sendRequestStatus,
   withAgentSatus,
 }) => {
   return (
@@ -20,10 +21,6 @@ const RatingBox = ({
               <div className="review-start" onClick={handleChatagent}>
                 {renderStars()}
               </div>
-              {/* <div className="review-update">
-                <span>Really Unsatisfied</span>
-                <span>Really Satisfied</span>
-              </div> */}
             </div>
           </div>
         )}
@@ -37,7 +34,14 @@ const RatingBox = ({
               </Button>
               <Button
                 className="chtagentbtn"
-                onClick={withAgentSatus ? () => {} : handleChatWithAgent}
+                disabled={sendRequestStatus ? true : false}
+                onClick={
+                  withAgentSatus
+                    ? () => {}
+                    : sendRequestStatus
+                    ? () => {}
+                    : handleChatWithAgent
+                }
               >
                 Chat with Agent
               </Button>
@@ -46,6 +50,6 @@ const RatingBox = ({
         )}
       </li>
     </>
-  );
-};
-export default RatingBox;
+  )
+}
+export default RatingBox
