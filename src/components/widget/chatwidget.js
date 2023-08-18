@@ -367,16 +367,17 @@ const ChatWidget = () => {
                       )}
                       {loading ? (
                         <li className="reply">
-                          {projectData?.bot_name && (
-                            <span className="loading_box"
-                              style={{ 
-                                borderColor: projectData?.text_container,
-                                color: projectData?.text_color,
-                              }}
-                            >
-                              {projectData?.bot_name} is typing <DotsLoader />
-                            </span>
-                          )} 
+                          <span
+                            className="loading_box"
+                            style={{
+                              borderColor: projectData?.text_container,
+                              color: projectData?.text_color,
+                            }}
+                          >
+                            {projectData?.bot_name &&
+                              projectData?.bot_name + "is"}{" "}
+                            typing <DotsLoader />
+                          </span>
                         </li>
                       ) : (
                         ""
