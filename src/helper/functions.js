@@ -93,6 +93,17 @@ export const handleSubmit = async (
         setMessages(messages);
         setError("");
         setLoading(false);
+        const payload = {
+          message: `Asked: ${message}`,
+          email: senderData?.email,
+          contactId: localStorage.getItem('ContactId'),
+          token: localStorage.getItem("auth_access_token"),
+          type: 'Email'
+        }
+        await axios.all([
+          axios.post(`${process.env.WEB_API_URL}/crm_data/send_message`, payload),
+          axios.post(`${process.env.WEB_API_URL}/crm_data/send_message`, {...payload, message: `Response: ${promptResponse}`})
+        ])
       } else {
         setLoading(false);
         toast.error(res?.data?.message);
@@ -218,7 +229,7 @@ export const createContact = async (
     Authorization: `Bearer ${auth_access_token}`,
   };
 
-  const response = await axios.post("http://localhost:5000/crm_data/Add_Contact", contact_teset , {headers});
+  const response = await axios.post(`${process.env.WEB_API_URL}/crm_data/Add_Contact`, contact_teset , {headers});
   
 
   console.log(response,'Add_ContactAdd_ContactAdd_Contact') 
@@ -360,7 +371,6 @@ console.log(update_details,'update_detailssdsd')
       setChatContinue,
       setRatingBox,
       );
-    toast.error(response?.data?.message);
   }
 };
 
@@ -457,7 +467,7 @@ const crm_conversation = async () => {
   };
 
   const response = await axios.post(
-    "http://localhost:5000/crm_data/create_conversation",
+    `${process.env.WEB_API_URL}/crm_data/create_conversation`,
     test,
     { headers }
   );
