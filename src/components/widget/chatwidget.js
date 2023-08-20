@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { StarIcon } from "@/assets/icon";
 import { Button } from "react-bootstrap";
 import DotsLoader from "@/components/Loader/DotsLoader";
@@ -20,7 +21,7 @@ import {
 import { get, post } from "@/pages/api/apis";
 import toast from "toastr";
 import moment from "moment";
-import WelComeMessage from "./welcomeMessage";
+import WelComeMessage from "./welcomeMessage"; 
 
 const socketIo = socketIOClient(process.env.WEB_API_URL);
 
@@ -304,6 +305,53 @@ const ChatWidget = () => {
     }
   };
 
+function getQueryParam(url, paramName) {
+  const params = new URLSearchParams(new URL(url).search);
+  return params.get(paramName);
+}
+ 
+const [apiKeyState, setApiKeyState] = useState('');
+
+useEffect(() => {
+  // Get the current URL
+  const currentURL = window.location.href;
+
+  // Extract the api_key value from the URL
+  const apiKey = getQueryParam(currentURL, "api_key");
+
+  // Update the apiKeyState when the component mounts
+  setApiKeyState(apiKey);
+  localStorage.setItem('apikey', apiKey); 
+
+  // Call the find_location function when apiKeyState changes
+  if (apiKeyState?.length > 0) {
+    find_location();
+  }
+
+}, [apiKeyState]); // Dependency array includes apiKeyState
+
+const find_location = async () => { 
+  try {
+    const response = await get(`crm_data/find_project_id?api_key=${apiKeyState}`);
+    console.log(response,'responseresponse')
+    if (response?.status === 200) {
+      const data = response?.data;
+      // Update localStorage values
+      localStorage.setItem('email', data?.email);
+      localStorage.setItem('client_id', data?.client_id);
+      localStorage.setItem('client_secret', data?.client_secret);
+      localStorage.setItem('code', data?.code);
+      localStorage.setItem('auth_access_token', data?.auth_access_token);
+      localStorage.setItem('refersh_auth_token', data?.refersh_auth_token);
+      localStorage.setItem('locationId', data?.locationId);
+      localStorage.setItem('redirect_uri', data?.redirect_uri);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+ 
   return (
     <>
       <div className="chat-widget-wrapper">
