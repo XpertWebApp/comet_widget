@@ -224,6 +224,23 @@
                   color: #656565;
                 }
               }
+              .loading_box {
+                font-size: 12px;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                .loder-chat {
+                  span {
+                    display: flex !important;
+                    span {
+                      width: 4px !important;
+                      height: 4px !important;
+                      background-color: #000 !important;
+                    }
+                  }
+                }
+              }
+              
             }
             .sender-chat-form {
               background: #f1f1f1;

@@ -1,135 +1,136 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { StarIcon } from '@/assets/icon'
-import { Button } from 'react-bootstrap'
-import DotsLoader from '@/components/Loader/DotsLoader'
-import Image from 'next/image'
-import UserImg from '../../assets/img/chatuser.png'
-import ChatButton from './Chatbutton'
-import socketIOClient from 'socket.io-client'
-import UserForm from './userForm'
-import UserChat from './userChat'
-import RatingBox from './ratingBox'
-import MessageForm from './messageForm'
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { StarIcon } from "@/assets/icon";
+import { Button } from "react-bootstrap";
+import DotsLoader from "@/components/Loader/DotsLoader";
+import Image from "next/image";
+import UserImg from "../../assets/img/chatuser.png";
+import ChatButton from "./Chatbutton";
+import socketIOClient from "socket.io-client";
+import UserForm from "./userForm";
+import UserChat from "./userChat";
+import RatingBox from "./ratingBox";
+import MessageForm from "./messageForm";
 import {
   getIpData,
   handleChange,
   handleFormClick,
   handleMemberChatSubmit,
   handleSubmit,
-} from '@/helper/functions'
-import { get, post } from '@/pages/api/apis'
-import toast from 'toastr'
-import moment from 'moment'
-import WelComeMessage from './welcomeMessage'
+} from "@/helper/functions";
+import { get, post } from "@/pages/api/apis";
+import toast from "toastr";
+import moment from "moment";
+import WelComeMessage from "./welcomeMessage"; 
 
-const socketIo = socketIOClient(process.env.WEB_API_URL)
+const socketIo = socketIOClient(process.env.WEB_API_URL);
 
 const ChatWidget = () => {
-  toast.options = { preventDuplicates: true }
-  const bottomRef = useRef(null)
-  const [widgetshow, setWidgetShow] = useState(false)
-  const [rating, setRating] = useState(0)
-  const [formData, setFormData] = useState({})
-  const [error, setError] = useState({})
-  const [ipAddress, setIpAddress] = useState('')
-  const [loader, setLoader] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
-  const [projectData, setProjectData] = useState({})
-  const [senderData, setSenderData] = useState({})
-  const [chatData, setChatData] = useState({})
-  const [messages, setMessages] = useState([])
-  const [history, setHistory] = useState([])
-  const [chatagent, setChatAgent] = useState(false)
-  const [chatcontinue, setChatContinue] = useState(true)
-  const [ratingBox, setRatingBox] = useState(false)
-  const [withAgentSatus, setWithAgentSatus] = useState(false)
-  const [withAgent, setWithAgent] = useState(false)
-  const [clicked, setclicked] = useState(false)
-  const [sendRequestStatus, setSendRequestStatus] = useState(false)
-  const [api_key, setapi_key] = useState('')
-  const chatMessages = useRef(null)
+  toast.options = { preventDuplicates: true };
+  const bottomRef = useRef(null);
+  const [widgetshow, setWidgetShow] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [formData, setFormData] = useState({});
+  const [error, setError] = useState({});
+  const [ipAddress, setIpAddress] = useState("");
+  const [loader, setLoader] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [projectData, setProjectData] = useState({});
+  const [senderData, setSenderData] = useState({});
+  const [chatData, setChatData] = useState({});
+  const [messages, setMessages] = useState([]);
+  const [history, setHistory] = useState([]);
+  const [chatagent, setChatAgent] = useState(false);
+  const [chatcontinue, setChatContinue] = useState(true);
+  const [ratingBox, setRatingBox] = useState(false);
+  const [withAgentSatus, setWithAgentSatus] = useState(false);
+  const [withAgent, setWithAgent] = useState(false);
+  const [clicked, setclicked] = useState(false);
+  const [sendRequestStatus, setSendRequestStatus] = useState(false);
+  const [api_key, setapi_key] = useState("");
+  const chatMessages = useRef(null);
 
   useEffect(() => {
     if (messages.length == 0)
       setMessages([
         ...messages,
         {
-          message: 'Hello! How may I assist you today?',
-          sender: 'bot',
-          type: 'message',
-          resTime: moment(new Date()).format('hh:mm A'),
+          message: "Hello! How may I assist you today?",
+          sender: "bot",
+          type: "message",
+          resTime: moment(new Date()).format("hh:mm A"),
         },
-      ])
-    chatMessages.current = messages
-  }, [messages])
+      ]);
+    chatMessages.current = messages;
+  }, [messages]);
 
   useEffect(() => {
     if (senderData?._id) {
-      setIpAddress(senderData?.ip)
-      localStorage.setItem('ipAddress', senderData?.ip)
+      setIpAddress(senderData?.ip);
+      localStorage.setItem("ipAddress", senderData?.ip);
     }
-  }, [senderData])
+  }, [senderData]);
 
   useEffect(() => {
     const pending =
-      localStorage.getItem('pending') &&
-      JSON.parse(localStorage.getItem('pending'))
+      localStorage.getItem("pending") &&
+      JSON.parse(localStorage.getItem("pending"));
     if (pending) {
-      setWithAgentSatus(true)
+      setWithAgentSatus(true);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     const withAgents =
-      localStorage.getItem('withAgent') &&
-      JSON.parse(localStorage.getItem('withAgent'))
+      localStorage.getItem("withAgent") &&
+      JSON.parse(localStorage.getItem("withAgent"));
     let newMsg =
       chatData && chatData?.messages && chatData?.messages.length > 0
-        ? chatData?.messages.filter((val) => val.sender != 'user')
-        : []
+        ? chatData?.messages.filter((val) => val.sender != "user")
+        : [];
     if (newMsg.length > 0) {
-      const newField = newMsg[newMsg.length - 1]
+      const newField = newMsg[newMsg.length - 1];
       if (
-        (newField?.sender != 'bot' &&
-          newField?.type == 'message' &&
-          chatData?.status == 'ongoing') ||
+        (newField?.sender != "bot" &&
+          newField?.type == "message" &&
+          chatData?.status == "ongoing") ||
         withAgents
       ) {
-        setWithAgent(true)
+        setWithAgent(true);
       } else {
-        setWithAgent(false)
+        setWithAgent(false);
       }
     } else {
-      setWithAgent(false)
+      setWithAgent(false);
     }
-  }, [chatData])
+  }, [chatData]);
 
   useEffect(() => {
-    socketIo.emit('onChatConnect', {
+    socketIo.emit("onChatConnect", {
       chat_id: chatData?._id,
-    })
-  }, [chatData])
+    });
+  }, [chatData]);
 
   useEffect(() => {
-    if (chatData?._id) getSingleChat()
-  }, [chatData])
+    if (chatData?._id) getSingleChat();
+  }, [chatData]);
 
   useEffect(() => {
     setTimeout(() => {
-      bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, 1000)
-  }, [messages, message, clicked])
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 1000);
+  }, [messages, message, clicked]);
 
   useEffect(() => {
-    const ip = localStorage.getItem('ipAddress')
-    setIpAddress(ip)
-  }, [])
+    const ip = localStorage.getItem("ipAddress");
+    setIpAddress(ip);
+  }, []);
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const Api_Key = urlParams.get('api_key')
-    setapi_key(Api_Key)
+    const urlParams = new URLSearchParams(window.location.search);
+    const Api_Key = urlParams.get("api_key");
+    setapi_key(Api_Key);
     if (ipAddress && Api_Key) {
       getIpData(
         setLoader,
@@ -137,26 +138,26 @@ const ChatWidget = () => {
         setSenderData,
         setProjectData,
         setChatData,
-        Api_Key,
-      )
+        Api_Key
+      );
     } else if (!Api_Key) {
-      toast.error('API key invalid!')
+      toast.error("API key invalid!");
     } else {
-      setLoader(true)
+      setLoader(true);
     }
-  }, [ipAddress])
+  }, [ipAddress]);
 
   useEffect(() => {
-    socketIo.on('message', (data) => {
+    socketIo.on("message", (data) => {
       if (!chatMessages.current.find((val) => val.message == data)) {
-        setWithAgentSatus(false)
-        localStorage.setItem('pending', false)
+        setWithAgentSatus(false);
+        localStorage.setItem("pending", false);
         if (
-          data.type == 'request' &&
-          data.message == 'This chat has been closed.'
+          data.type == "request" &&
+          data.message == "This chat has been closed."
         ) {
-          localStorage.setItem('withAgent', false)
-          setWithAgent(false)
+          localStorage.setItem("withAgent", false);
+          setWithAgent(false);
           setMessages([
             ...chatMessages.current,
             {
@@ -166,7 +167,7 @@ const ChatWidget = () => {
               createdAt: new Date(),
               type: data.type,
             },
-          ])
+          ]);
         } else {
           setMessages([
             ...chatMessages.current,
@@ -177,80 +178,80 @@ const ChatWidget = () => {
               createdAt: new Date(),
               type: data.type,
             },
-          ])
+          ]);
         }
       }
-    })
-  }, [])
+    });
+  }, []);
 
   const handleChatagent = () => {
-    setChatAgent(true)
-    setChatContinue(false)
-  }
+    setChatAgent(true);
+    setChatContinue(false);
+  };
   const handleChatcht = () => {
-    setChatContinue(true)
-    setChatAgent(false)
-    setRatingBox(false)
-  }
+    setChatContinue(true);
+    setChatAgent(false);
+    setRatingBox(false);
+  };
 
   const isValid = () => {
-    const regex = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}')
+    const regex = new RegExp("[a-z0-9]+@[a-z]+.[a-z]{2,3}");
     if (!formData.first_name) {
-      setError({ first_name: 'Please enter your first name!' })
-      return false
+      setError({ first_name: "Please enter your first name!" });
+      return false;
     }
     if (!formData.email) {
-      setError({ email: 'Please enter your email!' })
-      return false
+      setError({ email: "Please enter your email!" });
+      return false;
     } else if (formData.email && !regex.test(formData.email)) {
-      setError({ email: 'Please enter your valid email!' })
-      return false
+      setError({ email: "Please enter your valid email!" });
+      return false;
     } else {
-      setError({})
-      return true
+      setError({});
+      return true;
     }
-  }
+  };
 
   const isMessageValid = () => {
     if (!message) {
-      setError({ message: 'Please enter message!' })
-      return false
+      setError({ message: "Please enter message!" });
+      return false;
     } else {
-      setError({})
-      return true
+      setError({});
+      return true;
     }
-  }
+  };
 
   const handleMessageChange = (e) => {
-    setMessage(e.target.value.trimStart())
+    setMessage(e.target.value.trimStart());
     setError({
       ...error,
-      message: '',
-    })
-  }
+      message: "",
+    });
+  };
 
   const HandleWidget = () => {
-    setWidgetShow(!widgetshow)
-    setclicked(true)
-    setChatContinue(true)
-    setChatAgent(false)
-    setRatingBox(false)
+    setWidgetShow(!widgetshow);
+    setclicked(true);
+    setChatContinue(true);
+    setChatAgent(false);
+    setRatingBox(false);
     setTimeout(() => {
-      setclicked(false)
-    }, 1000)
-  }
+      setclicked(false);
+    }, 1000);
+  };
 
   const handleStarClick = (selectedRating) => {
-    setRating(selectedRating)
+    setRating(selectedRating);
     if (selectedRating > 3) {
-      setRatingBox(false)
+      setRatingBox(false);
     }
-  }
+  };
 
   const renderStars = () => {
-    let stars = []
+    let stars = [];
     for (let i = 1; i <= 5; i++) {
-      const starClass = i <= rating ? 'star selected' : 'star'
+      const starClass = i <= rating ? "star selected" : "star";
       stars.push(
         <>
           <Button
@@ -260,50 +261,97 @@ const ChatWidget = () => {
           >
             <StarIcon />
           </Button>
-        </>,
-      )
+        </>
+      );
     }
 
-    return stars
-  }
+    return stars;
+  };
 
   const handleChatWithAgent = async () => {
     if (senderData?._id) {
-      setSendRequestStatus(true)
-      const res = await post('notification/send', {
+      setSendRequestStatus(true);
+      const res = await post("notification/send", {
         project_id: projectData?._id,
         chat_id: chatData?._id,
         user_id: senderData?._id,
-      })
+      });
       if (res && res.data && res.data.status) {
-        setSendRequestStatus(false)
-        setWithAgentSatus(true)
-        localStorage.setItem('withAgent', true)
-        setWithAgent(true)
-        localStorage.setItem('pending', true)
-        setChatContinue(false)
-        setChatAgent(false)
-        setRatingBox(false)
+        setSendRequestStatus(false);
+        setWithAgentSatus(true);
+        localStorage.setItem("withAgent", true);
+        setWithAgent(true);
+        localStorage.setItem("pending", true);
+        setChatContinue(false);
+        setChatAgent(false);
+        setRatingBox(false);
       } else {
-        setChatContinue(true)
-        setWithAgentSatus(false)
-        setWithAgent(false)
-        toast.error(res?.data?.message)
+        setChatContinue(true);
+        setWithAgentSatus(false);
+        setWithAgent(false);
+        toast.error(res?.data?.message);
       }
     }
-  }
+  };
 
   const getSingleChat = async () => {
     if (chatData?._id) {
-      const res = await get(`chat/getSingle?chat_id=${chatData?._id}`)
+      const res = await get(`chat/getSingle?chat_id=${chatData?._id}`);
       if (res?.data?.status) {
-        setMessages(res?.data?.message[0]?.messages)
+        setMessages(res?.data?.message[0]?.messages);
       } else {
-        toast.error(res?.data?.message)
+        toast.error(res?.data?.message);
       }
     }
+  };
+
+function getQueryParam(url, paramName) {
+  const params = new URLSearchParams(new URL(url).search);
+  return params.get(paramName);
+}
+ 
+const [apiKeyState, setApiKeyState] = useState('');
+
+useEffect(() => {
+  // Get the current URL
+  const currentURL = window.location.href;
+
+  // Extract the api_key value from the URL
+  const apiKey = getQueryParam(currentURL, "api_key");
+
+  // Update the apiKeyState when the component mounts
+  setApiKeyState(apiKey);
+  localStorage.setItem('apikey', apiKey); 
+
+  // Call the find_location function when apiKeyState changes
+  if (apiKeyState?.length > 0) {
+    find_location();
   }
 
+}, [apiKeyState]); // Dependency array includes apiKeyState
+
+const find_location = async () => { 
+  try {
+    const response = await get(`crm_data/find_project_id?api_key=${apiKeyState}`);
+    console.log(response,'responseresponse')
+    if (response?.status === 200) {
+      const data = response?.data;
+      // Update localStorage values
+      localStorage.setItem('email', data?.email);
+      localStorage.setItem('client_id', data?.client_id);
+      localStorage.setItem('client_secret', data?.client_secret);
+      localStorage.setItem('code', data?.code);
+      localStorage.setItem('auth_access_token', data?.auth_access_token);
+      localStorage.setItem('refersh_auth_token', data?.refersh_auth_token);
+      localStorage.setItem('locationId', data?.locationId);
+      localStorage.setItem('redirect_uri', data?.redirect_uri);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+ 
   return (
     <>
       <div className="chat-widget-wrapper">
@@ -334,10 +382,10 @@ const ChatWidget = () => {
                                   withAgentSatus={withAgentSatus}
                                 />
                               </>
-                            )
+                            );
                           })
-                        : ''}
-                      {withAgentSatus ? <WelComeMessage /> : ''}
+                        : ""}
+                      {withAgentSatus ? <WelComeMessage /> : ""}
 
                       {loader && !ipAddress && (
                         <UserForm
@@ -348,7 +396,7 @@ const ChatWidget = () => {
                               setError,
                               setFormData,
                               formData,
-                              error,
+                              error
                             )
                           }
                           error={error}
@@ -360,17 +408,27 @@ const ChatWidget = () => {
                               setIpAddress,
                               setChatAgent,
                               setChatContinue,
-                              setRatingBox,
+                              setRatingBox
                             )
                           }
                         />
                       )}
                       {loading ? (
-                        <li className="sender">
-                          <DotsLoader />
+                        <li className="reply">
+                          <span
+                            className="loading_box"
+                            style={{
+                              borderColor: projectData?.text_container,
+                              color: projectData?.text_color,
+                            }}
+                          >
+                            {projectData?.bot_name &&
+                              projectData?.bot_name + "is"}{" "}
+                            typing <DotsLoader />
+                          </span>
                         </li>
                       ) : (
-                        ''
+                        ""
                       )}
                       {ratingBox && (
                         <RatingBox
@@ -404,7 +462,7 @@ const ChatWidget = () => {
                               chatData,
                               senderData,
                               messages,
-                              socketIo,
+                              socketIo
                             )
                         : (e) =>
                             handleSubmit(
@@ -424,7 +482,7 @@ const ChatWidget = () => {
                               setChatAgent,
                               setChatContinue,
                               setRatingBox,
-                              setError,
+                              setError
                             )
                     }
                     error={error}
@@ -440,6 +498,6 @@ const ChatWidget = () => {
         )}
       </div>
     </>
-  )
-}
-export default ChatWidget
+  );
+};
+export default ChatWidget;
